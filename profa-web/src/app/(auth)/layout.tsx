@@ -2,6 +2,7 @@ import { Scale, BrainCircuit, BadgeCheck } from "lucide-react";
 import { CyberCard } from "@/shared/ui/CyberCard";
 import { SnowParticles } from "@/shared/ui/SnowParticles";
 import { CommunitySection } from "@/shared/ui/CommunitySection";
+import { TermsModal } from "@/features/auth/components/TermsModal";
 
 export default function AuthLayout({
     children,
@@ -34,7 +35,7 @@ export default function AuthLayout({
                 <div
                     className="absolute inset-0 -z-20"
                     style={{
-                        backgroundImage: "url('/assets/image.png')",
+                        backgroundImage: "url('/assets/login-robot-bg.png')",
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
@@ -118,9 +119,25 @@ export default function AuthLayout({
                     <CommunitySection className="bg-black/40 border-primary/20 backdrop-blur-md" />
                 </div>
 
+                {/* ── K) CRÉDITOS ── */}
+                <div className="w-full mt-8 pt-6 border-t border-white/5 text-center px-4">
+                    <p className="text-[10px] md:text-xs text-muted-foreground/60 font-mono tracking-widest uppercase mb-1">
+                        Diseño y Desarrollo de Software
+                    </p>
+                    <h3 className="text-xs md:text-sm text-primary/80 font-bold tracking-wide">
+                        Mg. Sergio J. De la Cruz Zuñiga
+                    </h3>
+                    <p className="text-[9px] md:text-[10px] text-gray-500 mt-1 max-w-md mx-auto">
+                        Especialista en Derecho Penal y Procesal Penal — Especialista en IA y Derecho Penal — Perito Informático
+                    </p>
+                </div>
+
 
 
             </div>
+
+            {/* Modal de Términos (Global en layout) */}
+            <TermsModal />
         </div>
     );
 }

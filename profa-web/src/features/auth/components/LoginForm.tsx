@@ -167,6 +167,22 @@ export function LoginForm() {
                     Regístrate aquí
                 </Link>
             </div>
+
+            <div className="pt-6 border-t border-white/10 mt-6">
+                <p className="text-[10px] text-gray-500 text-center leading-relaxed">
+                    <span className="font-bold text-primary/80">VERSIÓN BETA RESTRINGIDA.</span>
+                    <br />
+                    Este software es una herramienta educativa de uso exclusivo.
+                    <br />
+                    <button
+                        type="button"
+                        onClick={() => document.getElementById('terms-modal-trigger')?.click()}
+                        className="underline hover:text-white transition-colors cursor-pointer mt-1"
+                    >
+                        Ver Términos y Condiciones
+                    </button>
+                </p>
+            </div>
         </CyberCard>
     )
 }
