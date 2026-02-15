@@ -22,7 +22,8 @@ export default function Home() {
               backgroundImage: "url('/assets/login-robot-bg.png')",
               backgroundSize: "cover",
               backgroundPosition: "center top",
-              opacity: 1
+              opacity: 1,
+              filter: "brightness(1.1) contrast(1.1) saturate(1.1)"
             }}
           />
 
@@ -101,11 +102,7 @@ export default function Home() {
                   Ingresar
                 </NeonButton>
               </Link>
-              <Link href="#features" className="w-full sm:w-auto">
-                <NeonButton variant="outline" size="lg" className="w-full sm:w-48 text-base md:text-lg font-bold tracking-wider uppercase bg-black/60 hover:bg-black/80 border-primary/50">
-                  Detalles
-                </NeonButton>
-              </Link>
+
             </div>
 
             <div id="features" className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 pt-8 text-left w-full scroll-mt-24">

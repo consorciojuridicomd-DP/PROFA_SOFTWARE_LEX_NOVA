@@ -39,7 +39,8 @@ export default function AuthLayout({
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         backgroundRepeat: "no-repeat",
-                        opacity: 0.9
+                        opacity: 1,
+                        filter: "brightness(1.1) contrast(1.1) saturate(1.1)"
                     }}
                 />
 
