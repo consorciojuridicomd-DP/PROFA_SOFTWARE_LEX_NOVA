@@ -1,0 +1,29 @@
+[
+    {
+        "titulo": "CASO Nº 04: Título del Caso (Copiado de NotebookLM)",
+        "materia": "Penal",
+        "contenido": "Texto completo del caso... (Copiar hechos aquí)",
+        "preguntas": [
+            {
+                "enunciado": "¿Pregunta 1?",
+                "dificultad": 3,
+                "explicacion": "Explicación o fundamento jurídico...",
+                "fuente": "Código Penal Art. X",
+                "alternativas": [
+                    {
+                        "texto": "Alternativa A",
+                        "es_correcta": false
+                    },
+                    {
+                        "texto": "Alternativa B",
+                        "es_correcta": true
+                    },
+                    {
+                        "texto": "Alternativa C",
+                        "es_correcta": false
+                    }
+                ]
+            }
+        ]
+    }
+]

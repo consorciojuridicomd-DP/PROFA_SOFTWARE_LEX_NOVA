@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState } from "react"
 import { createClient } from "@/shared/lib/supabase/client"
 import { AdminTable } from "@/features/admin/components/AdminTable"

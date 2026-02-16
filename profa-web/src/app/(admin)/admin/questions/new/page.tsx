@@ -1,5 +1,7 @@
 import { QuestionEditor } from "@/features/admin/components/QuestionEditor";
 
+export const dynamic = "force-dynamic";
+
 export default function NewQuestionPage() {
     return (
         <div className="space-y-8">

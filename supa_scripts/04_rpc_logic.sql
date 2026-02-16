@@ -36,8 +36,12 @@ BEGIN
     IF v_user_id IS NULL THEN RAISE EXCEPTION 'Not authenticated'; END IF;
 
     -- Get duration from exam or config
-    -- (Simplification: using exam duration)
-    SELECT duracion_min INTO v_duration FROM public.examenes WHERE id = p_examen_id;
+    IF p_examen_id IS NOT NULL THEN
+        SELECT duracion_min INTO v_duration FROM public.examenes WHERE id = p_examen_id;
+    ELSE
+        v_duration := (p_config->>'durationMinutes')::INT;
+        IF v_duration IS NULL THEN v_duration := 60; END IF;
+    END IF;
     
     -- Insert Intento
     INSERT INTO public.intentos (examen_id, user_id, started_at, ended_at, estado, metadata)
@@ -51,13 +55,36 @@ BEGIN
     )
     RETURNING id INTO v_intento_id;
 
-    -- Select Questions defined in examen_preguntas
-    -- (In future: handle dynamic generation if examen_id is a "generator" template)
-    -- For now, copy from examen_preguntas
-    INSERT INTO public.session_questions (intento_id, pregunta_id, orden)
-    SELECT v_intento_id, pregunta_id, orden
-    FROM public.examen_preguntas
-    WHERE examen_id = p_examen_id;
+    IF p_examen_id IS NOT NULL THEN
+        -- Select Questions defined in examen_preguntas (Fixed Exam)
+        INSERT INTO public.session_questions (intento_id, pregunta_id, orden)
+        SELECT v_intento_id, pregunta_id, orden
+        FROM public.examen_preguntas
+        WHERE examen_id = p_examen_id;
+    ELSE
+        -- DYNAMIC MODE: Select random questions based on config
+        -- 1. Extract limit
+        v_limit := (p_config->>'questionCount')::INT;
+        IF v_limit IS NULL OR v_limit <= 0 THEN v_limit := 30; END IF;
+        
+        -- 2. Insert random questions
+        -- Note: If topics are provided in config, we should filter. 
+        -- For robust implementation, we assume topics are Materia IDs.
+        -- Use logic to filter if topics array is not empty.
+        
+        INSERT INTO public.session_questions (intento_id, pregunta_id, orden)
+        SELECT v_intento_id, id, row_number() OVER (ORDER BY RANDOM())
+        FROM public.preguntas q
+        WHERE 
+            q.estado = 'active' AND -- Only active questions
+            (
+                (p_config->'topics') IS NULL OR 
+                jsonb_array_length(p_config->'topics') = 0 OR 
+                q.materia_id::text IN (SELECT jsonb_array_elements_text(p_config->'topics'))
+            )
+        LIMIT v_limit;
+        
+    END IF;
     
     RETURN v_intento_id;
 END;
@@ -89,6 +116,8 @@ BEGIN
             'tipo', q.tipo,
             'dificultad', q.dificultad,
             'category', m.nombre, -- Added category
+            'source', q.fuente_bibliografica,
+            'sourceUrl', q.url_fuente,
             'orden', sq.orden,
             'options', ( -- Renamed for frontend consistency
                 SELECT jsonb_agg(
