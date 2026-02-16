@@ -21,8 +21,8 @@ import { Lock, KeyRound, User, Eye, EyeOff } from "lucide-react"
 
 const formSchema = z.object({
     fullName: z.string().min(2, "Nombre requerido"),
-    dni: z.string().min(8, "DNI debe tener 8 dígitos").max(8, "DNI debe tener 8 dígitos").regex(/^\d+$/, "Solo números"),
-    password: z.string().min(4, "Mínimo 4 caracteres"),
+    dni: z.string().length(8, "DNI debe tener exactamente 8 dígitos").regex(/^\d+$/, "Solo números"),
+    password: z.string().length(4, "La contraseña debe tener exactamente 4 dígitos"),
     confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
@@ -45,6 +45,17 @@ export function RegisterForm() {
             confirmPassword: "",
         },
     })
+
+    // Auto-clear form on mount
+    useEffect(() => {
+        form.reset({
+            fullName: "",
+            dni: "",
+            password: "",
+            confirmPassword: "",
+        });
+        setError("");
+    }, [form]);
 
     function getFriendlyError(msg: string): string {
         if (msg.includes("rate limit")) return "⏳ Demasiados intentos. Espera 5 minutos.";
@@ -79,7 +90,7 @@ export function RegisterForm() {
                                 <div className="relative">
                                     <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
-                                        <Input placeholder="Juan Pérez" className="pl-10" {...field} />
+                                        <Input placeholder="Juan Pérez" className="pl-10 uppercase" {...field} />
                                     </FormControl>
                                 </div>
                                 <FormMessage />
@@ -98,6 +109,7 @@ export function RegisterForm() {
                                     <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
                                         <Input
+                                            type="text"
                                             placeholder="12345678"
                                             className="pl-10 tracking-widest font-mono text-lg"
                                             maxLength={8}
@@ -124,8 +136,9 @@ export function RegisterForm() {
                                     <FormControl>
                                         <Input
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="******"
-                                            className="pl-10 pr-10 uppercase"
+                                            placeholder="****"
+                                            className="pl-10 pr-10 uppercase font-mono tracking-widest"
+                                            maxLength={4}
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                                         />
@@ -155,8 +168,9 @@ export function RegisterForm() {
                                     <FormControl>
                                         <Input
                                             type={showConfirm ? "text" : "password"}
-                                            placeholder="******"
-                                            className="pl-10 pr-10 uppercase"
+                                            placeholder="****"
+                                            className="pl-10 pr-10 uppercase font-mono tracking-widest"
+                                            maxLength={4}
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                                         />
