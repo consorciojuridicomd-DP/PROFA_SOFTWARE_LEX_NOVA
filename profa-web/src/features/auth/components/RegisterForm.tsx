@@ -22,7 +22,7 @@ import { Lock, KeyRound, User, Eye, EyeOff } from "lucide-react"
 const formSchema = z.object({
     fullName: z.string().min(2, "Nombre requerido"),
     dni: z.string().min(8, "DNI debe tener 8 dígitos").max(8, "DNI debe tener 8 dígitos").regex(/^\d+$/, "Solo números"),
-    password: z.string().min(6, "Mínimo 6 caracteres"),
+    password: z.string().min(4, "Mínimo 4 caracteres"),
     confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",

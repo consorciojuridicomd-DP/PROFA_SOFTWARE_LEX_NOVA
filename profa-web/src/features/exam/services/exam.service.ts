@@ -23,26 +23,13 @@ export const examService = {
     startSession: async (config: ExamConfig, examId?: string): Promise<ExamSession> => {
         const supabase = createClient();
 
-        let targetExamId = examId;
-
-        // If no examId provided, fetch the first active one (Fallback for Custom Exam mode)
-        if (!targetExamId) {
-            const { data: exams } = await supabase
-                .from('examenes')
-                .select('id')
-                .eq('activo', true)
-                .limit(1);
-
-            if (exams && exams.length > 0) {
-                targetExamId = exams[0].id;
-            } else {
-                throw new Error("No active exams found to start session.");
-            }
-        }
+        // If examId is provided, we use it (Fixed Exam Mode).
+        // If NOT provided, we pass NULL to RPC (Dynamic/Custom Mode).
+        // The RPC handles NULL p_examen_id by using the config topics/limits.
 
         // 1. Call RPC start_session
         const { data: sessionId, error } = await supabase.rpc('start_session', {
-            p_examen_id: targetExamId,
+            p_examen_id: examId || null,
             p_config: config
         });
 
@@ -62,11 +49,14 @@ export const examService = {
             category: q.category || 'General',
             options: (q.options || []).map((o: any) => ({ id: o.id, text: o.text })),
             difficulty: mapDifficulty(q.dificultad),
+            source: q.source,
+            sourceUrl: q.sourceUrl,
+            caseContext: q.caseContext
         }));
 
         const session: ExamSession = {
             id: sessionId,
-            templateId: targetExamId!,
+            templateId: examId || "dynamic", // Fallback string or null if allowed
             config,
             startedAt: new Date(),
             endsAt: config.durationMinutes ? new Date(Date.now() + config.durationMinutes * 60000) : null,
@@ -145,6 +135,9 @@ export const examService = {
             category: q.category || 'General',
             options: (q.options || []).map((o: any) => ({ id: o.id, text: o.text })),
             difficulty: mapDifficulty(q.dificultad),
+            source: q.source,
+            sourceUrl: q.sourceUrl,
+            caseContext: q.caseContext
         }));
 
         // 3. Get Responses

@@ -41,6 +41,22 @@ export default function ExamRunnerPage() {
 
     const currentQuestion = session.questions[currentIdx];
 
+    if (!currentQuestion) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
+                <div className="text-destructive font-bold text-xl">
+                    ⚠️ No se encontraron preguntas para esta configuración.
+                </div>
+                <p className="text-muted-foreground">
+                    El tema seleccionado no tiene contenido disponible aun en la base de datos.
+                </p>
+                <NeonButton onClick={() => router.push('/app/select')}>
+                    Volver a Configuración
+                </NeonButton>
+            </div>
+        );
+    }
+
     const handleOptionSelect = (optionId: string) => {
         if (!session) return;
         const newResponses = { ...session.responses, [currentQuestion.id]: [optionId] };
@@ -111,6 +127,7 @@ export default function ExamRunnerPage() {
 
                 <div className="flex-1 overflow-y-auto">
                     <QuestionPanel
+                        key={currentQuestion.id}
                         question={currentQuestion}
                         questionNumber={currentIdx + 1}
                         totalQuestions={session.questions.length}

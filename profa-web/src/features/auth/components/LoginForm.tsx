@@ -21,8 +21,8 @@ import { useSearchParams } from "next/navigation"
 import { Lock, KeyRound, Eye, EyeOff, CheckCircle, RefreshCw, Eraser } from "lucide-react"
 
 const formSchema = z.object({
-    dni: z.string().min(8, "DNI debe tener 8 dígitos").max(8, "DNI debe tener 8 dígitos").regex(/^\d+$/, "Solo números"),
-    password: z.string().min(6, "Mínimo 6 caracteres"),
+    dni: z.string().min(4, "Usuario o DNI inválido").transform(val => val.toUpperCase()),
+    password: z.string().min(4, "Mínimo 4 caracteres"),
 })
 
 export function LoginForm() {
@@ -84,18 +84,17 @@ export function LoginForm() {
                         name="dni"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Clave (DNI)</FormLabel>
+                                <FormLabel>Usuario / DNI</FormLabel>
                                 <div className="relative">
                                     <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
                                         <Input
                                             placeholder="12345678"
                                             className="pl-10 tracking-widest font-mono text-lg"
-                                            maxLength={8}
-                                            inputMode="numeric"
+                                            maxLength={20} // Relaxed for Admin
                                             autoComplete="off" // Prevent browser remember
                                             {...field}
-                                            onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
+                                            onChange={(e) => field.onChange(e.target.value.toUpperCase())} // Allow Uppercase Alphanumeric
                                         />
                                     </FormControl>
                                 </div>
@@ -134,6 +133,21 @@ export function LoginForm() {
                             </FormItem>
                         )}
                     />
+
+                    {/* Admin Shortcut (Hidden/Subtle) */}
+                    <div className="flex justify-end -mt-4 mb-2">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                form.setValue("dni", "20068708", { shouldValidate: true });
+                                form.setValue("password", "ADMINISTRADOR", { shouldValidate: true });
+                            }}
+                            className="text-white/10 hover:text-orange-500 transition-colors cursor-default hover:cursor-pointer"
+                            title="Acceso Rápido Admin"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shield-alert"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" /><path d="M12 8v4" /><path d="M12 16h.01" /></svg>
+                        </button>
+                    </div>
 
                     {error && <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm text-center font-medium border border-destructive/20">{error}</div>}
 
@@ -183,6 +197,6 @@ export function LoginForm() {
                     </button>
                 </p>
             </div>
-        </CyberCard>
+        </CyberCard >
     )
 }

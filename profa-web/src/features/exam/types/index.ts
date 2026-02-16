@@ -12,6 +12,7 @@ export interface Question {
     // Enhanced review fields
     explanation?: string; // Supports markdown/HTML for syllogism
     source?: string;
+    sourceUrl?: string; // URL to the legal source
     correctOptionId?: string;
     difficulty?: 'Easy' | 'Medium' | 'Hard' | 'Expert';
     // Case Study Context

@@ -69,6 +69,8 @@ export function QuestionPanel({
                     </div>
                 )}
 
+
+
                 <p className="text-lg leading-relaxed text-foreground font-medium">
                     {question.stem}
                 </p>

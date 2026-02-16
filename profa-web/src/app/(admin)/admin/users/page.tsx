@@ -65,6 +65,32 @@ export default function AdminUsersPage() {
         }
     };
 
+    const resetPassword = async (userId: string) => {
+        const supabase = createClient();
+        const { error } = await supabase.rpc('admin_reset_password', {
+            p_user_id: userId,
+            p_new_password: 'Password123!',
+        });
+        if (!error) {
+            alert("Contraseña restablecida a: Password123!");
+        } else {
+            alert("Error al restablecer contraseña: " + error.message);
+        }
+    };
+
+    const deleteUser = async (userId: string) => {
+        if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
+        const supabase = createClient();
+        const { error } = await supabase.rpc('admin_reject_user', {
+            p_user_id: userId
+        });
+        if (!error) {
+            setUsers(prev => prev.filter(u => u.id !== userId));
+        } else {
+            alert("Error al eliminar: " + error.message);
+        }
+    };
+
     const filteredUsers = users.filter(user =>
         (user.full_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
         (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
@@ -188,7 +214,8 @@ export default function AdminUsersPage() {
                                             <select
                                                 value={user.role}
                                                 onChange={(e) => changeRole(user.id, e.target.value)}
-                                                className="bg-background border border-border rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                                                disabled={user.role === 'admin'}
+                                                className={`bg-background border border-border rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary ${user.role === 'admin' ? 'opacity-50 cursor-not-allowed' : ''}`}
                                             >
                                                 <option value="student">Estudiante</option>
                                                 <option value="docente">Docente</option>
@@ -209,15 +236,44 @@ export default function AdminUsersPage() {
                                             )}
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <div className="flex justify-center">
+                                            <div className="flex justify-center items-center gap-2">
+                                                {/* Toggle Status */}
                                                 {toggling === user.id ? (
                                                     <RefreshCw className="h-5 w-5 animate-spin text-muted-foreground" />
                                                 ) : (
-                                                    <Toggle
-                                                        checked={user.is_active}
-                                                        onChange={(checked) => toggleActive(user.id, checked)}
-                                                        labels={{ on: "ON", off: "OFF" }}
-                                                    />
+                                                    <div title={user.role === 'admin' ? "Admin protegido" : "Cambiar estado"}>
+                                                        <Toggle
+                                                            checked={user.is_active}
+                                                            onChange={(checked) => toggleActive(user.id, checked)}
+                                                            disabled={user.role === 'admin'}
+                                                            labels={{ on: "ON", off: "OFF" }}
+                                                        />
+                                                    </div>
+                                                )}
+
+                                                {/* Reset Password */}
+                                                <button
+                                                    onClick={() => resetPassword(user.id)}
+                                                    className="p-1.5 hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500 rounded-md transition-colors"
+                                                    title="Restablecer Contraseña"
+                                                >
+                                                    <Shield className="h-4 w-4" />
+                                                </button>
+
+                                                {/* Delete User (Protected) */}
+                                                {user.role !== 'admin' && (
+                                                    <button
+                                                        onClick={() => deleteUser(user.id)}
+                                                        className="p-1.5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 rounded-md transition-colors"
+                                                        title="Eliminar Usuario"
+                                                    >
+                                                        <UserX className="h-4 w-4" />
+                                                    </button>
+                                                )}
+                                                {user.role === 'admin' && (
+                                                    <span title="Protegido">
+                                                        <Shield className="h-4 w-4 text-primary/30" />
+                                                    </span>
                                                 )}
                                             </div>
                                         </td>
