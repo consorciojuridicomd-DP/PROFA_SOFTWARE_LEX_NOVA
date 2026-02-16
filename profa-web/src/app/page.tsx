@@ -13,7 +13,7 @@ export default function Home() {
 
         {/* ── Central Card (Robot Container) ── */}
         <div
-          className="w-full max-w-5xl flex flex-col items-center text-center gap-6 md:gap-10 rounded-3xl px-6 py-10 md:px-14 md:py-16 relative overflow-hidden ring-1 ring-white/10 shadow-2xl"
+          className="w-full max-w-5xl flex flex-col items-center text-center gap-6 md:gap-10 rounded-3xl px-6 py-10 md:px-14 md:py-16 relative overflow-hidden ring-1 ring-white/10 shadow-2xl bg-black/20 cyber-grid"
         >
           {/* 1. Robot Background (Inside Content Box) */}
           <div
@@ -24,18 +24,31 @@ export default function Home() {
               backgroundPosition: "center top",
               opacity: 1,
               filter: "brightness(1.1) contrast(1.1) saturate(1.1)",
-              animation: "float-robot 6s ease-in-out infinite"
+              animation: "float-robot 6s ease-in-out infinite, robot-glitch 10s step-end infinite"
             }}
           />
 
-          {/* 1.1 Eye Glow Effects (Absolute positioned for typical robot scale) */}
-          <div className="absolute inset-x-0 top-[22%] -z-15 flex justify-center gap-12 pointer-events-none opacity-80">
-            <div className="w-4 h-4 rounded-full bg-primary/80 shadow-[0_0_20px_#FF5500] blur-sm animate-[eye-glow_3s_ease-in-out_infinite]" />
-            <div className="w-4 h-4 rounded-full bg-primary/80 shadow-[0_0_20px_#FF5500] blur-sm animate-[eye-glow_3s_ease-in-out_infinite_0.5s]" />
+          {/* Digital Scanner Effect */}
+          <div className="absolute inset-0 -z-18 pointer-events-none overflow-hidden opacity-20">
+            <div className="absolute left-0 right-0 h-[2px] bg-primary shadow-[0_0_15px_#FF5500] animate-[scanner-line_8s_linear_infinite]" />
+          </div>
+
+          {/* 1.1 Eye Glow Effects - RED BLINKING AS REQUESTED */}
+          <div className="absolute inset-x-0 top-[22%] -z-15 flex justify-center gap-12 pointer-events-none overflow-visible">
+            {/* Ojo Izquierdo */}
+            <div className="relative">
+              <div className="w-4 h-4 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] blur-[1px] animate-[eye-blink-red_4s_infinite]" />
+              <div className="absolute inset-0 w-4 h-4 rounded-full bg-white opacity-40 blur-sm scale-50" />
+            </div>
+            {/* Ojo Derecho */}
+            <div className="relative">
+              <div className="w-4 h-4 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] blur-[1px] animate-[eye-blink-red_4s_infinite_0.2s]" />
+              <div className="absolute inset-0 w-4 h-4 rounded-full bg-white opacity-40 blur-sm scale-50" />
+            </div>
           </div>
 
           {/* 2. Dark Scrim (Inside Content Box) - to ensure text legibility */}
-          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/80 via-black/50 to-black/90" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/30 to-black/80" />
 
           {/* 3. Snow Effects (Inside Content Box - falling on robot) */}
           <div className="absolute inset-0 -z-0 opacity-80 mix-blend-screen pointer-events-none">

@@ -222,3 +222,75 @@
     filter: blur(8px) brightness(2);
   }
 }
+
+/* ── Red Blink / Alert Effect ── */
+@keyframes eye-blink-red {
+
+  0%,
+  94%,
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+    background-color: #ff0000;
+    box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+  }
+
+  96%,
+  98% {
+    opacity: 0.2;
+    transform: scaleY(0.1);
+    background-color: #ff5500;
+  }
+}
+
+/* ── Digital Scanner Line ── */
+@keyframes scanner-line {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.5;
+  }
+
+  90% {
+    opacity: 0.5;
+  }
+
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* ── Subtle Glitch for Robot ── */
+@keyframes robot-glitch {
+  0% {
+    transform: translate(0);
+  }
+
+  2% {
+    transform: translate(-2px, 1px);
+    filter: hue-rotate(90deg);
+  }
+
+  4% {
+    transform: translate(2px, -1px);
+    filter: hue-rotate(0deg);
+  }
+
+  6% {
+    transform: translate(0);
+  }
+
+  100% {
+    transform: translate(0);
+  }
+}
+
+.cyber-grid {
+  background-image: linear-gradient(rgba(255, 85, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 85, 0, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
