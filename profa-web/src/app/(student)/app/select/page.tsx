@@ -107,19 +107,19 @@ export default function ExamSelectPage() {
                 <p className="text-muted-foreground">Configura tu simulacro o práctica personalizada.</p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                 {/* Configuration Panel */}
-                <CyberCard title="Configuración de Exámen" icon={<Settings className="h-6 w-6" />}>
+                <CyberCard title="Configuración de Exámen" icon={<Settings className="h-6 w-6" />} className="w-full overflow-hidden">
                     <div className="space-y-6">
                         {/* Questions Count */}
                         <div className="space-y-3">
                             <label className="text-sm font-medium text-muted-foreground">Cantidad de Preguntas</label>
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-2 sm:gap-3">
                                 {[10, 20, 30, 40, 50].map(count => (
                                     <button
                                         key={count}
                                         onClick={() => setConfig({ ...config, questionCount: count })}
-                                        className={`min-w-[50px] flex-1 py-2 px-3 rounded-md border text-sm font-bold transition-all ${config.questionCount === count
+                                        className={`flex-1 min-w-[40px] sm:min-w-[50px] py-2 px-2 sm:px-3 rounded-md border text-xs sm:text-sm font-bold transition-all ${config.questionCount === count
                                             ? "border-primary bg-primary/20 text-primary shadow-[0_0_10px_rgba(255,85,0,0.3)]"
                                             : "border-border bg-card hover:bg-accent"
                                             }`}
@@ -133,7 +133,7 @@ export default function ExamSelectPage() {
                         {/* Duration */}
                         <div className="space-y-3">
                             <label className="text-sm font-medium text-muted-foreground">Tiempo Límite</label>
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-2 sm:gap-3">
                                 {[
                                     { label: "10 m", val: 10 },
                                     { label: "20 m", val: 20 },
@@ -144,7 +144,7 @@ export default function ExamSelectPage() {
                                     <button
                                         key={opt.label}
                                         onClick={() => setConfig({ ...config, durationMinutes: opt.val })}
-                                        className={`min-w-[60px] flex-1 py-2 px-3 rounded-md border text-sm font-bold transition-all ${config.durationMinutes === opt.val
+                                        className={`flex-1 min-w-[55px] sm:min-w-[60px] py-2 px-2 sm:px-3 rounded-md border text-xs sm:text-sm font-bold transition-all ${config.durationMinutes === opt.val
                                             ? "border-primary bg-primary/20 text-primary shadow-[0_0_10px_rgba(255,85,0,0.3)]"
                                             : "border-border bg-card hover:bg-accent"
                                             }`}
@@ -155,30 +155,29 @@ export default function ExamSelectPage() {
                             </div>
                         </div>
 
-                        {/* Topic Selection */}
                         {/* Topic Selection - KNOWLEDGE */}
                         <div className="space-y-3">
                             <div className="flex justify-between items-center mb-1">
                                 <label className="text-sm font-medium text-muted-foreground">Temas de Conocimientos</label>
                                 <button
                                     onClick={() => setConfig({ ...config, topics: config.topics.filter(t => !knowledgeTopics.includes(t)) })}
-                                    className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors px-2 py-0.5 border border-border rounded"
+                                    className="text-[10px] uppercase font-bold text-muted-foreground hover:text-primary transition-colors px-2 py-1 border border-border rounded whitespace-nowrap"
                                 >
                                     Ninguno
                                 </button>
                             </div>
-                            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 sm:max-h-48 overflow-y-auto pr-2 custom-scrollbar">
                                 {knowledgeTopics.map(topic => (
                                     <div
                                         key={topic}
                                         onClick={() => toggleTopic(topic)}
-                                        className={`cursor-pointer px-3 py-2 rounded border text-xs transition-colors flex items-center gap-2 ${config.topics.includes(topic)
+                                        className={`cursor-pointer px-3 py-2.5 rounded border text-[11px] sm:text-xs transition-colors flex items-center gap-2 h-auto ${config.topics.includes(topic)
                                             ? "border-primary bg-primary/10 text-foreground"
                                             : "border-border text-muted-foreground hover:bg-accent"
                                             }`}
                                     >
-                                        <div className={`w-3 h-3 rounded-full border ${config.topics.includes(topic) ? "bg-primary border-primary" : "border-muted-foreground"}`} />
-                                        {topic}
+                                        <div className={`flex-shrink-0 w-3 h-3 rounded-full border ${config.topics.includes(topic) ? "bg-primary border-primary" : "border-muted-foreground"}`} />
+                                        <span className="leading-tight">{topic}</span>
                                     </div>
                                 ))}
                             </div>
@@ -186,14 +185,14 @@ export default function ExamSelectPage() {
 
                         {/* Topic Selection - PRACTICAL CASES */}
                         <div className="space-y-3 pt-4 border-t border-border">
-                            <div className="flex items-center justify-between mb-2">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                                 <div className="flex items-center gap-2">
                                     <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
                                     <label className="text-sm font-bold text-foreground">Simulación de Casos Prácticos</label>
                                 </div>
                                 <button
                                     onClick={() => setConfig({ ...config, topics: config.topics.filter(t => !caseTopics.includes(t)) })}
-                                    className="text-[10px] uppercase font-bold text-muted-foreground hover:text-cyan-400 transition-colors px-2 py-0.5 border border-border rounded"
+                                    className="text-[10px] uppercase font-bold text-muted-foreground hover:text-cyan-400 transition-colors px-2 py-1 border border-border rounded self-start sm:self-auto"
                                 >
                                     Ninguno
                                 </button>
@@ -215,68 +214,68 @@ export default function ExamSelectPage() {
                                         setConfig({ ...config, topics: [...otherTopics, ...allCases] });
                                     }
                                 }}
-                                className={`cursor-pointer w-full px-4 py-3 mb-3 rounded border text-sm font-bold transition-all flex items-center justify-center gap-3 ${caseTopics.every(t => config.topics.includes(t))
+                                className={`cursor-pointer w-full px-4 py-3 mb-3 rounded border text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-3 text-center ${caseTopics.every(t => config.topics.includes(t))
                                     ? "border-cyan-400 bg-cyan-500/20 text-cyan-100 shadow-[0_0_15px_rgba(34,211,238,0.2)]"
                                     : "border-border bg-card/50 hover:bg-accent"
                                     }`}
                             >
-                                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${caseTopics.every(t => config.topics.includes(t)) ? "bg-cyan-400 border-cyan-400" : "border-muted-foreground"}`}>
+                                <div className={`flex-shrink-0 w-4 h-4 rounded-full border flex items-center justify-center ${caseTopics.every(t => config.topics.includes(t)) ? "bg-cyan-400 border-cyan-400" : "border-muted-foreground"}`}>
                                     {caseTopics.every(t => config.topics.includes(t)) && <div className="w-2 h-2 bg-black rounded-full" />}
                                 </div>
-                                SIMULACRO GENERAL / MIXTURA (Todas las Materias)
+                                <span className="leading-tight">SIMULACRO GENERAL / MIXTURA (Todas las Materias)</span>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 sm:max-h-none overflow-y-auto sm:overflow-visible pr-1 sm:pr-0">
                                 {caseTopics.map(topic => (
                                     <div
                                         key={topic}
                                         onClick={() => toggleTopic(topic)}
-                                        className={`cursor-pointer px-3 py-3 rounded border text-xs font-medium transition-colors flex items-center gap-2 ${config.topics.includes(topic)
+                                        className={`cursor-pointer px-3 py-3 rounded border text-[11px] sm:text-xs font-medium transition-colors flex items-center gap-2 h-auto ${config.topics.includes(topic)
                                             ? "border-cyan-500 bg-cyan-950/30 text-cyan-100 shadow-[0_0_10px_rgba(34,211,238,0.1)]"
                                             : "border-border text-muted-foreground hover:bg-accent"
                                             }`}
                                     >
-                                        <div className={`w-3 h-3 rounded-full border ${config.topics.includes(topic) ? "bg-cyan-400 border-cyan-400" : "border-muted-foreground"}`} />
-                                        {topic}
+                                        <div className={`flex-shrink-0 w-3 h-3 rounded-full border ${config.topics.includes(topic) ? "bg-cyan-400 border-cyan-400" : "border-muted-foreground"}`} />
+                                        <span className="leading-tight">{topic}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        <p className="text-xs text-muted-foreground mt-2">* Si no seleccionas ninguno, se incluirán todos los temas.</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground mt-2">* Si no seleccionas ninguno, se incluirán todos los temas.</p>
                     </div>
                 </CyberCard>
 
                 {/* Summary & Action */}
                 <div className="flex flex-col gap-6">
                     <CyberCard title="Resumen" className="flex-1 bg-gradient-to-br from-card to-background">
-                        <div className="flex flex-col h-full justify-center items-center gap-6 py-6">
+                        <div className="flex flex-col h-full justify-center items-center gap-6 py-6 px-2">
                             <div className="text-center">
                                 <span className="block text-sm text-muted-foreground mb-1">Modo</span>
-                                <span className="text-xl font-bold text-foreground">
+                                <span className="text-lg sm:text-xl font-bold text-foreground leading-tight">
                                     {config.durationMinutes ? "Simulacro con Tiempo" : "Práctica Libre"}
                                 </span>
                             </div>
 
-                            <div className="flex gap-8">
+                            <div className="flex flex-wrap justify-center gap-4 sm:gap-8">
                                 <div className="flex flex-col items-center">
-                                    <HelpCircle className="h-6 w-6 text-primary mb-2" />
-                                    <span className="text-2xl font-bold">{config.questionCount}</span>
-                                    <span className="text-xs text-muted-foreground">Preguntas</span>
+                                    <HelpCircle className="h-5 w-5 sm:h-6 sm:w-6 text-primary mb-1 sm:mb-2" />
+                                    <span className="text-xl sm:text-2xl font-bold">{config.questionCount}</span>
+                                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">Preguntas</span>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <Clock className="h-6 w-6 text-primary mb-2" />
-                                    <span className="text-2xl font-bold">
+                                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-primary mb-1 sm:mb-2" />
+                                    <span className="text-xl sm:text-2xl font-bold">
                                         {config.durationMinutes ? `${config.durationMinutes} m` : "∞"}
                                     </span>
-                                    <span className="text-xs text-muted-foreground">Minutos</span>
+                                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">Minutos</span>
                                 </div>
                                 <div className="flex flex-col items-center">
-                                    <BookOpen className="h-6 w-6 text-primary mb-2" />
-                                    <span className="text-2xl font-bold">
+                                    <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-primary mb-1 sm:mb-2" />
+                                    <span className="text-xl sm:text-2xl font-bold">
                                         {config.topics.length === 0 ? "Todos" : config.topics.length}
                                     </span>
-                                    <span className="text-xs text-muted-foreground">Temas</span>
+                                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">Temas</span>
                                 </div>
                             </div>
                         </div>
@@ -285,7 +284,7 @@ export default function ExamSelectPage() {
                     <NeonButton
                         onClick={handleStart}
                         size="lg"
-                        className="w-full h-14 text-lg gap-2"
+                        className="w-full h-14 text-base sm:text-lg gap-2"
                         disabled={loading}
                     >
                         {loading ? "Generando..." : <><Play className="h-5 w-5" /> COMENZAR EXÁMEN</>}

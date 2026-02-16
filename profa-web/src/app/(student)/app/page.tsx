@@ -1,3 +1,5 @@
+"use client"
+
 import { CategoryBarChart } from "@/features/dashboard/components/CategoryBarChart";
 import { GapsTable } from "@/features/dashboard/components/GapsTable";
 import { ScoreTrendLine } from "@/features/dashboard/components/ScoreTrendLine";
@@ -5,13 +7,19 @@ import { CyberCard } from "@/shared/ui/CyberCard";
 import { CommunitySection } from "@/shared/ui/CommunitySection";
 import { getTopRecommendation } from "@/features/study-plan/data";
 import { Activity, BookOpen, Target, Trophy } from "lucide-react";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 export default function DashboardPage() {
+    const { user } = useAuth();
     const topRec = getTopRecommendation();
+    const firstName = user?.full_name?.split(' ')[0] || "Aspirante";
+
     return (
         <div className="space-y-8">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight text-foreground">Hola, Aspirante</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-foreground italic">
+                    Hola, <span className="text-primary">{firstName}</span>
+                </h2>
                 <p className="text-muted-foreground">Aquí está tu resumen y progreso de aprendizaje.</p>
             </div>
 
