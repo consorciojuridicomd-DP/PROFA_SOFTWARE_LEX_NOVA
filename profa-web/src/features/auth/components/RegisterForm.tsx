@@ -20,9 +20,9 @@ import { useState, useEffect } from "react"
 import { Lock, KeyRound, User, Eye, EyeOff } from "lucide-react"
 
 const formSchema = z.object({
-    fullName: z.string().min(2, "Nombre requerido"),
-    dni: z.string().length(8, "DNI debe tener exactamente 8 dígitos").regex(/^\d+$/, "Solo números"),
-    password: z.string().length(4, "La contraseña debe tener exactamente 4 dígitos"),
+    fullName: z.string().min(2, "Nombre completo es requerido"),
+    dni: z.string().length(8, "El DNI debe tener exactamente 8 dígitos").regex(/^\d+$/, "Solo se permiten números"),
+    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres (Requisito del Servidor)"),
     confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
@@ -56,7 +56,6 @@ export function RegisterForm() {
             confirmPassword: "",
         });
         setError("");
-        // Ensure eyes are closed on mount
         setShowDni(false);
         setShowPassword(false);
         setShowConfirm(false);
@@ -65,6 +64,7 @@ export function RegisterForm() {
     function getFriendlyError(msg: string): string {
         if (msg.includes("rate limit")) return "⏳ Demasiados intentos. Espera 5 minutos.";
         if (msg.includes("already registered") || msg.includes("already been registered")) return "Este DNI ya está registrado. Usa 'Inicia Sesión'.";
+        if (msg.includes("at least 6 characters")) return "❌ La contraseña debe tener al menos 6 caracteres (Seguridad del Servidor).";
         return msg || "Error al registrar. Intenta de nuevo.";
     }
 
@@ -84,18 +84,24 @@ export function RegisterForm() {
     return (
         <CyberCard title="REGISTRO LEX NOVA" className="w-full">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" autoComplete="off">
                     {/* Nombre */}
                     <FormField
                         control={form.control}
                         name="fullName"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Nombre Completo</FormLabel>
+                                <FormLabel>Nombre y Apellidos</FormLabel>
                                 <div className="relative">
                                     <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
-                                        <Input placeholder="Juan Pérez" className="pl-10 uppercase" {...field} />
+                                        <Input
+                                            placeholder="Escribe tu nombre completo"
+                                            className="pl-10 uppercase"
+                                            autoComplete="new-user-fullname"
+                                            id="reg-fullname"
+                                            {...field}
+                                        />
                                     </FormControl>
                                 </div>
                                 <FormMessage />
@@ -119,6 +125,8 @@ export function RegisterForm() {
                                             className="pl-10 pr-10 tracking-widest font-mono text-lg"
                                             maxLength={8}
                                             inputMode="numeric"
+                                            autoComplete="new-user-dni"
+                                            id="reg-dni"
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
                                         />
@@ -142,15 +150,17 @@ export function RegisterForm() {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Contraseña</FormLabel>
+                                <FormLabel>Contraseña (Min. 6 caracteres)</FormLabel>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
                                         <Input
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="****"
+                                            placeholder="******"
                                             className="pl-10 pr-10 uppercase font-mono tracking-widest"
-                                            maxLength={4}
+                                            maxLength={20}
+                                            autoComplete="new-password"
+                                            id="reg-pass"
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                                         />
@@ -180,9 +190,11 @@ export function RegisterForm() {
                                     <FormControl>
                                         <Input
                                             type={showConfirm ? "text" : "password"}
-                                            placeholder="****"
+                                            placeholder="******"
                                             className="pl-10 pr-10 uppercase font-mono tracking-widest"
-                                            maxLength={4}
+                                            maxLength={20}
+                                            autoComplete="new-password"
+                                            id="reg-confirm"
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                                         />
