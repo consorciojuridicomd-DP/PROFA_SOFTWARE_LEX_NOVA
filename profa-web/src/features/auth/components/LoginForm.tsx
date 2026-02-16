@@ -30,6 +30,7 @@ export function LoginForm() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [showDni, setShowDni] = useState(false);
     const searchParams = useSearchParams();
     const justRegistered = searchParams.get('registered') === '1';
 
@@ -47,17 +48,16 @@ export function LoginForm() {
             dni: "",
             password: ""
         });
-    }, []);
+        setError("");
+    }, [form]);
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setLoading(true);
         setError("");
         try {
             await login(values.dni, values.password.toUpperCase());
-            // Form clearing is handled by the redirect, but we can also reset here for safety
             form.reset();
         } catch (err: any) {
-            // ... existing error handling ...
             const msg = err?.message || "";
             if (msg.includes("pendiente")) {
                 setError("⏳ " + msg);
@@ -89,14 +89,22 @@ export function LoginForm() {
                                     <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
                                         <Input
+                                            type={showDni ? "text" : "password"}
                                             placeholder="12345678"
-                                            className="pl-10 tracking-widest font-mono text-lg"
-                                            maxLength={20} // Relaxed for Admin
-                                            autoComplete="off" // Prevent browser remember
+                                            className="pl-10 pr-10 tracking-widest font-mono text-lg"
+                                            maxLength={8}
+                                            autoComplete="off"
                                             {...field}
-                                            onChange={(e) => field.onChange(e.target.value.toUpperCase())} // Allow Uppercase Alphanumeric
+                                            onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                                         />
                                     </FormControl>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowDni(!showDni)}
+                                        className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground focus:outline-none"
+                                    >
+                                        {showDni ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </button>
                                 </div>
                                 <FormMessage />
                             </FormItem>
@@ -114,9 +122,10 @@ export function LoginForm() {
                                     <FormControl>
                                         <Input
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="******"
-                                            className="pl-10 pr-10 uppercase"
-                                            autoComplete="new-password" // Trick to prevent aggressive autofill
+                                            placeholder="****"
+                                            className="pl-10 pr-10 uppercase font-mono tracking-widest"
+                                            maxLength={4}
+                                            autoComplete="new-password"
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                                         />
