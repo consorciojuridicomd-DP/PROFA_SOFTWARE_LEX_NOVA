@@ -33,6 +33,7 @@ export function RegisterForm() {
     const { register } = useAuth();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [showDni, setShowDni] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
@@ -55,6 +56,10 @@ export function RegisterForm() {
             confirmPassword: "",
         });
         setError("");
+        // Ensure eyes are closed on mount
+        setShowDni(false);
+        setShowPassword(false);
+        setShowConfirm(false);
     }, [form]);
 
     function getFriendlyError(msg: string): string {
@@ -109,15 +114,22 @@ export function RegisterForm() {
                                     <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
                                         <Input
-                                            type="text"
+                                            type={showDni ? "text" : "password"}
                                             placeholder="12345678"
-                                            className="pl-10 tracking-widest font-mono text-lg"
+                                            className="pl-10 pr-10 tracking-widest font-mono text-lg"
                                             maxLength={8}
                                             inputMode="numeric"
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.replace(/\D/g, ''))}
                                         />
                                     </FormControl>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowDni(!showDni)}
+                                        className="absolute right-3 top-2.5 text-muted-foreground hover:text-foreground focus:outline-none"
+                                    >
+                                        {showDni ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                                    </button>
                                 </div>
                                 <FormMessage />
                             </FormItem>
