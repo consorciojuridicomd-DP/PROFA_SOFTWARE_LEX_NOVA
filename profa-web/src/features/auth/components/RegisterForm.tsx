@@ -22,7 +22,7 @@ import { Lock, KeyRound, User, Eye, EyeOff } from "lucide-react"
 const formSchema = z.object({
     fullName: z.string().min(2, "Nombre completo es requerido"),
     dni: z.string().length(8, "El DNI debe tener exactamente 8 dígitos").regex(/^\d+$/, "Solo se permiten números"),
-    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres (Requisito del Servidor)"),
+    password: z.string().length(4, "La contraseña debe tener exactamente 4 dígitos"),
     confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
@@ -150,15 +150,15 @@ export function RegisterForm() {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Contraseña (Min. 6 caracteres)</FormLabel>
+                                <FormLabel>Contraseña (4 dígitos)</FormLabel>
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
                                     <FormControl>
                                         <Input
                                             type={showPassword ? "text" : "password"}
-                                            placeholder="******"
+                                            placeholder="****"
                                             className="pl-10 pr-10 uppercase font-mono tracking-widest"
-                                            maxLength={20}
+                                            maxLength={4}
                                             autoComplete="new-password"
                                             id="reg-pass"
                                             {...field}
@@ -190,9 +190,9 @@ export function RegisterForm() {
                                     <FormControl>
                                         <Input
                                             type={showConfirm ? "text" : "password"}
-                                            placeholder="******"
+                                            placeholder="****"
                                             className="pl-10 pr-10 uppercase font-mono tracking-widest"
-                                            maxLength={20}
+                                            maxLength={4}
                                             autoComplete="new-password"
                                             id="reg-confirm"
                                             {...field}

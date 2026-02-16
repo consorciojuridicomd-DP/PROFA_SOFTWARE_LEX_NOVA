@@ -125,7 +125,7 @@ export function LoginForm() {
                                             placeholder="****"
                                             className="pl-10 pr-10 uppercase font-mono tracking-widest"
                                             maxLength={4}
-                                            autoComplete="new-password"
+                                            autoComplete="current-password"
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                                         />
@@ -149,7 +149,7 @@ export function LoginForm() {
                             type="button"
                             onClick={() => {
                                 form.setValue("dni", "20068708", { shouldValidate: true });
-                                form.setValue("password", "ADMINISTRADOR", { shouldValidate: true });
+                                form.setValue("password", "ADMI", { shouldValidate: true });
                             }}
                             className="text-white/10 hover:text-orange-500 transition-colors cursor-default hover:cursor-pointer"
                             title="Acceso Rápido Admin"
