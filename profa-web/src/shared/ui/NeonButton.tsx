@@ -22,9 +22,9 @@ const neonButtonVariants = cva(
                     "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-[0_0_20px_rgba(255,0,0,0.6)]",
             },
             size: {
-                default: "h-10 px-6 py-2",
-                sm: "h-9 rounded-md px-3 text-xs",
-                lg: "h-12 rounded-md px-8 text-base",
+                default: "h-10 px-4 sm:px-6 py-2 text-xs sm:text-sm",
+                sm: "h-9 rounded-md px-3 text-[10px] sm:text-xs",
+                lg: "h-12 rounded-md px-6 sm:px-8 text-sm sm:text-base",
                 icon: "h-10 w-10",
             },
         },

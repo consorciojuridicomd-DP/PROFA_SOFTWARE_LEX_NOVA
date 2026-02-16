@@ -23,9 +23,16 @@ export default function Home() {
               backgroundSize: "cover",
               backgroundPosition: "center top",
               opacity: 1,
-              filter: "brightness(1.1) contrast(1.1) saturate(1.1)"
+              filter: "brightness(1.1) contrast(1.1) saturate(1.1)",
+              animation: "float-robot 6s ease-in-out infinite"
             }}
           />
+
+          {/* 1.1 Eye Glow Effects (Absolute positioned for typical robot scale) */}
+          <div className="absolute inset-x-0 top-[22%] -z-15 flex justify-center gap-12 pointer-events-none opacity-80">
+            <div className="w-4 h-4 rounded-full bg-primary/80 shadow-[0_0_20px_#FF5500] blur-sm animate-[eye-glow_3s_ease-in-out_infinite]" />
+            <div className="w-4 h-4 rounded-full bg-primary/80 shadow-[0_0_20px_#FF5500] blur-sm animate-[eye-glow_3s_ease-in-out_infinite_0.5s]" />
+          </div>
 
           {/* 2. Dark Scrim (Inside Content Box) - to ensure text legibility */}
           <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/80 via-black/50 to-black/90" />
@@ -61,9 +68,9 @@ export default function Home() {
             />
 
             {/* ── Title Block ── */}
-            <div className="space-y-4">
+            <div className="space-y-4 px-2">
               <h1
-                className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-tight"
+                className="text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-tight"
                 style={{
                   color: "#FFFFFF",
                   textShadow: "0 4px 30px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.8)",
@@ -73,7 +80,7 @@ export default function Home() {
               </h1>
 
               <h2
-                className="text-xl sm:text-3xl md:text-4xl font-bold tracking-wide break-words max-w-full"
+                className="text-lg sm:text-3xl md:text-4xl font-bold tracking-wide break-words max-w-full italic"
                 style={{
                   color: "#FF5500",
                   textShadow: "0 0 15px rgba(255,85,0,0.4), 0 2px 5px rgba(0,0,0,1)",

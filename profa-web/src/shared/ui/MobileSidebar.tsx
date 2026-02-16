@@ -93,10 +93,10 @@ export function MobileSidebar() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    "flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden",
+                                    "flex items-center gap-4 rounded-lg px-4 py-4 text-sm font-semibold transition-all duration-200 group relative overflow-hidden",
                                     isActive
-                                        ? "bg-primary/10 text-primary"
-                                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                                        ? "bg-primary/20 text-primary shadow-[inset_0_0_10px_rgba(255,85,0,0.1)]"
+                                        : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                                 )}
                             >
                                 {isActive && (

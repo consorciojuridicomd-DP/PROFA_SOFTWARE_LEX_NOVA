@@ -151,11 +151,11 @@ export function LoginForm() {
 
                     {error && <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm text-center font-medium border border-destructive/20">{error}</div>}
 
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                         <NeonButton
                             type="submit"
                             disabled={loading}
-                            className="flex-1 font-bold tracking-widest bg-gradient-to-r from-primary to-orange-600 hover:from-primary/90 hover:to-orange-600/90 border-0 shadow-[0_0_20px_rgba(255,85,0,0.3)]"
+                            className="w-full font-bold tracking-widest bg-gradient-to-r from-primary to-orange-600 hover:from-primary/90 hover:to-orange-600/90 border-0 shadow-[0_0_20px_rgba(255,85,0,0.3)] h-12"
                         >
                             {loading && <RefreshCw className="mr-2 h-4 w-4 animate-spin" />}
                             INGRESAR AL SISTEMA
@@ -165,7 +165,7 @@ export function LoginForm() {
                             type="button"
                             variant="outline"
                             onClick={() => form.reset({ dni: "", password: "" })}
-                            className="w-auto px-4 border-red-500/50 text-red-400 hover:bg-red-500/20 gap-2 font-bold text-xs"
+                            className="w-full sm:w-auto px-6 border-red-500/50 text-red-400 hover:bg-red-500/20 gap-2 font-bold text-xs h-12"
                             title="Limpiar campos"
                         >
                             <Eraser className="h-4 w-4" />
