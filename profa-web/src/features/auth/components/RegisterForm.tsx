@@ -16,7 +16,7 @@ import {
     FormMessage,
 } from "@/shared/ui/form"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Lock, KeyRound, User, Eye, EyeOff } from "lucide-react"
 
 const formSchema = z.object({
