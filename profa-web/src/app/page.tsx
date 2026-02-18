@@ -1,57 +1,30 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { CyberCard } from "@/shared/ui/CyberCard";
 import { NeonButton } from "@/shared/ui/NeonButton";
 import { SnowParticles } from "@/shared/ui/SnowParticles";
 import { CommunitySection } from "@/shared/ui/CommunitySection";
 import Link from "next/link";
-import { BadgeCheck, BrainCircuit, Scale, LogIn, ShieldAlert, Zap, UserCheck } from "lucide-react";
+import { BadgeCheck, BrainCircuit, Scale, LogIn } from "lucide-react";
 import { useAuth } from "@/features/login/hooks/useAuth";
 
 const homeStyles = `
-@keyframes soft-pulse {
-  0%, 100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 20px rgba(255,85,0,0.4)); }
-  50% { transform: scale(1.05); filter: brightness(1.2) drop-shadow(0 0 40px rgba(255,85,0,0.6)); }
+@keyframes eye-glow {
+  0%, 100% { opacity: 0.6; filter: brightness(1) blur(2px); transform: scale(1); }
+  50% { opacity: 1; filter: brightness(1.8) blur(4px); transform: scale(1.15); }
 }
 
-@keyframes eye-spark {
-  0%, 100% { opacity: 0; transform: scale(0); }
-  5%, 15% { opacity: 1; transform: scale(1.2); filter: brightness(3); }
-  10%, 20% { opacity: 0; transform: scale(0.5); }
+@keyframes robot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-@keyframes laser-beam {
-  0% { transform: scaleX(0); opacity: 0; }
-  20%, 80% { transform: scaleX(1); opacity: 0.5; filter: blur(1px); }
-  100% { transform: scaleX(0); opacity: 0; }
+.animate-eye {
+  animation: eye-glow 3s ease-in-out infinite;
 }
 
-@keyframes robot-breathing {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-10px) scale(1.01); }
-}
-
-@keyframes eye-blink-red {
-  0%, 100% { opacity: 1; box-shadow: 0 0 15px #ff0000; }
-  48%, 52% { opacity: 0.3; }
-}
-
-.animate-sparks {
-  animation: eye-spark 3s infinite;
-}
-
-.animate-laser {
-  animation: laser-beam 4s ease-in-out infinite;
-  transform-origin: center;
-}
-
-.animate-robot {
-  animation: robot-breathing 8s ease-in-out infinite;
-}
-
-.animate-eye-blink {
-  animation: eye-blink-red 4s ease-in-out infinite;
+.animate-robot-bg {
+  animation: robot-float 10s ease-in-out infinite;
 }
 `;
 
@@ -67,136 +40,114 @@ export default function Home() {
     <main className="relative min-h-screen w-full overflow-hidden font-sans text-white flex flex-col items-center">
       <style dangerouslySetInnerHTML={{ __html: homeStyles }} />
 
-      {/* GLOBAL LAYERS */}
-      <div className="fixed inset-0 -z-30 opacity-10 pointer-events-none bg-[url('/grid.svg')] mix-blend-overlay" />
-      <div className="fixed inset-0 -z-20 pointer-events-none opacity-40">
+      {/* FONDO DE PARTICULAS */}
+      <div className="fixed inset-0 -z-20 pointer-events-none opacity-30">
         <SnowParticles />
       </div>
 
-      {/* Exit Button */}
+      {/* BOTON SALIR (REQUISITO FUNCIONAL) */}
       <div className="fixed top-6 right-6 z-[100]">
         <button
           onClick={handleExit}
-          className="group flex items-center gap-3 bg-red-600/10 hover:bg-red-600/20 border-2 border-red-600/30 hover:border-red-600 px-6 py-3 rounded-full transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,0,0,0.5)] active:scale-95 shadow-[0_0_20px_rgba(255,0,0,0.2)]"
+          className="group flex items-center gap-3 bg-red-600/10 hover:bg-red-600/20 border-2 border-red-600/30 hover:border-red-600 px-6 py-2 rounded-full transition-all duration-300"
         >
-          <span className="text-[10px] font-black tracking-[0.3em] uppercase text-red-500 group-hover:text-red-400">Cerrar Sistema</span>
-          <div className="w-8 h-8 rounded-full bg-red-600/20 flex items-center justify-center group-hover:bg-red-600 transition-colors">
-            <LogIn className="w-4 h-4 text-red-500 group-hover:text-white rotate-180" />
-          </div>
+          <span className="text-[10px] font-black tracking-widest uppercase text-red-500">Cerrar Sistema</span>
+          <LogIn className="w-4 h-4 text-red-500 rotate-180" />
         </button>
       </div>
 
-      <div className="relative z-10 w-full flex flex-col items-center px-4 py-8 md:px-8 mt-20">
+      <div className="relative z-10 w-full flex flex-col items-center px-4 py-8 md:px-8 mt-10">
 
-        {/* ── Central Robot Visual (RESTORED) ── */}
-        <div className="w-full max-w-5xl flex flex-col items-center text-center gap-6 md:gap-10 rounded-3xl px-6 py-10 md:px-14 md:py-16 relative overflow-hidden ring-1 ring-white/20 shadow-[0_0_50px_rgba(0,0,0,0.9)] bg-black/60 backdrop-blur-xl animate-robot">
+        {/* ── CONTENEDOR CENTRAL (DISEÑO ORIGINAL) ── */}
+        <div className="w-full max-w-6xl flex flex-col items-center text-center gap-8 md:gap-12 rounded-3xl p-6 md:p-16 relative overflow-hidden bg-black/40 border border-white/10 backdrop-blur-md shadow-2xl">
 
-          {/* VISIBLE ROBOT IMAGE */}
+          {/* IMAGEN DEL ROBOT (VISIBLE Y ESCALADA) */}
           <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
             <img
               src="/assets/robot-portada.jpg"
               alt="Robot Background"
-              className="w-full h-full object-cover object-center opacity-90 scale-105"
+              className="w-full h-full object-cover object-center opacity-70 animate-robot-bg"
             />
-            {/* Soft gradient overlay to keep robot visible but text legible */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
           </div>
 
-          {/* Ojos Láser Integrados (Sutiles) */}
-          <div className="absolute inset-x-0 top-[38%] z-[10] flex justify-center gap-14 pointer-events-none">
-            <div className="relative left-[-3%] flex items-center justify-center">
-              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_20px_#ff0000] animate-eye-blink flex items-center justify-center">
-                <Zap className="absolute text-white animate-sparks w-3 h-3 opacity-0" fill="currentColor" />
-              </div>
-              <div className="absolute h-[1px] w-[300px] bg-red-600/40 animate-laser blur-[1px]" />
+          {/* BRILLO DE OJOS (ÚNICO EFECTO SOLICITADO) */}
+          <div className="absolute inset-x-0 top-[37%] z-[5] flex justify-center gap-14 pointer-events-none">
+            <div className="relative left-[-3%]">
+              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_25px_#ff0000,0_0_45px_#ff0000] animate-eye" />
             </div>
-            <div className="relative left-[5%] flex items-center justify-center">
-              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_20px_#ff0000] animate-eye-blink flex items-center justify-center">
-                <Zap className="absolute text-white animate-sparks w-3 h-3 opacity-0" fill="currentColor" />
-              </div>
-              <div className="absolute h-[1px] w-[300px] bg-red-600/40 animate-laser blur-[1px]" />
+            <div className="relative left-[5%]">
+              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_25px_#ff0000,0_0_45px_#ff0000] animate-eye" />
             </div>
           </div>
 
-          <div className="relative z-20 w-full flex flex-col items-center gap-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-black/80 backdrop-blur-md px-4 py-2 text-[10px] md:text-xs text-primary font-black tracking-widest shadow-[0_0_15px_rgba(255,85,0,0.3)] uppercase">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-              </span>
+          <div className="relative z-20 flex flex-col items-center gap-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/30 bg-black/60 px-4 py-1.5 text-[10px] text-orange-500 font-bold tracking-widest uppercase">
+              <span className="h-2 w-2 rounded-full bg-orange-500" />
               Sistema de Evaluación 31° PROFA Activo
             </div>
 
-            <div className="relative group">
-              <div className="absolute inset-0 bg-primary/20 blur-3xl animate-pulse" />
+            <div className="relative">
               <img
                 src="/assets/logo-derecho-peru.png"
                 alt="Derecho Perú"
-                className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-full drop-shadow-[0_0_30px_rgba(255,85,0,0.8)] relative z-10"
+                className="h-24 w-24 md:h-32 md:w-32 object-contain rounded-full shadow-[0_0_30px_rgba(255,85,0,0.5)] border border-white/10"
               />
             </div>
 
-            <div className="space-y-4">
-              <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter leading-none text-white uppercase italic drop-shadow-[0_4px_8px_rgba(0,0,0,1)]">
+            <div className="space-y-2">
+              <h1 className="text-5xl sm:text-7xl md:text-9xl font-black italic tracking-tighter text-white uppercase drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
                 DERECHO PERÚ
               </h1>
-              <h2 className="text-xl sm:text-3xl md:text-5xl font-black tracking-widest text-primary drop-shadow-[0_0_20px_rgba(255,85,0,0.5)] uppercase">
+              <h2 className="text-xl sm:text-3xl md:text-5xl font-black tracking-[0.2em] text-orange-500 uppercase">
                 PROFA SOFTWARE LEX NOVA
               </h2>
             </div>
 
-            <p className="max-w-2xl text-sm md:text-lg text-white font-bold leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
+            <p className="max-w-xl text-sm md:text-lg text-gray-200 font-medium leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
               Actualización inteligente para la nueva magistratura: destaca en la evaluación.
             </p>
 
-            <Link href="/login" className="mt-4">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full group-hover:bg-primary/40 transition-all duration-500 scale-150 opacity-0 group-hover:opacity-100" />
-                <button className="relative w-24 h-24 md:w-28 md:h-28 rounded-full bg-black/80 border-2 border-primary/30 flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:border-primary shadow-[0_0_30px_rgba(255,85,0,0.2)]">
-                  <LogIn className="w-10 h-10 text-white" strokeWidth={2.5} />
-                </button>
+            <Link href="/login" className="mt-4 transition-transform hover:scale-110">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-black border-2 border-white/20 flex items-center justify-center hover:border-orange-500 shadow-xl">
+                <LogIn className="w-8 h-8 text-white" />
               </div>
             </Link>
           </div>
         </div>
 
-        {/* Credits Layer (IMPORTANT: Sergi De la Cruz) */}
-        <div className="w-full max-w-5xl mt-8 px-6 flex flex-col items-center gap-2">
-          <div className="h-[1px] w-20 bg-primary/50 mb-2" />
-          <div className="flex items-center gap-3 text-white/80 group">
-            <UserCheck size={16} className="text-primary animate-pulse" />
-            <div className="flex flex-col">
-              <span className="text-xs font-black tracking-[0.2em] uppercase">Creador del Sistema:</span>
-              <span className="text-sm font-bold text-primary tracking-widest uppercase italic">Mg. Sergio J. De la Cruz Zúñiga</span>
-            </div>
-          </div>
-          <p className="text-[10px] text-gray-500 font-medium text-center max-w-md mt-2 uppercase tracking-tighter">
-            Especialista en Derecho Penal e IA - Perito Informático - Lex Nova System 2026.v1
-          </p>
-        </div>
-
-        {/* Feature Cards */}
+        {/* ── CARDS DE CARACTERISTICAS (LAYOUT ORIGINAL) ── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-12">
           <CyberCard
             title="Simulacros Reales"
             description="Exámenes cronometrados con la misma estructura y rigor que el examen oficial del JNJ."
-            icon={<Scale className="text-primary w-6 h-6" />}
+            icon={<Scale className="text-orange-500 w-6 h-6" />}
           />
           <CyberCard
             title="Análisis Predictivo"
             description="Detecta tus brechas de conocimiento por categoría y genera planes de estudio automáticos."
-            icon={<BrainCircuit className="text-primary w-6 h-6" />}
+            icon={<BrainCircuit className="text-orange-500 w-6 h-6" />}
           />
           <CyberCard
             title="Antifraude"
             description="Timer sincronizado con servidor y bloqueo de respuestas post-tiempo. Integridad total."
-            icon={<BadgeCheck className="text-primary w-6 h-6" />}
+            icon={<BadgeCheck className="text-orange-500 w-6 h-6" />}
           />
         </div>
 
-        <div className="mt-20 w-full max-w-6xl mb-20">
+        <div className="mt-16 w-full max-w-6xl">
           <CommunitySection />
         </div>
+
+        {/* ── CREDITOS FINALES (DISEÑO DE IMAGEN 2) ── */}
+        <div className="mt-16 mb-20 text-center space-y-2">
+          <p className="text-[10px] md:text-xs text-gray-400 font-bold uppercase tracking-[0.3em]">Desarrollado por:</p>
+          <h3 className="text-base md:text-lg font-black text-white uppercase tracking-widest">Mg. Sergio J. De la Cruz Zúñiga</h3>
+          <p className="text-[9px] md:text-[10px] text-orange-600 font-black uppercase tracking-tighter leading-tight max-w-lg mx-auto">
+            ESPECIALISTA EN DERECHO PROCESAL PENAL E INTELIGENCIA ARTIFICIAL - PERITO INFORMÁTICO
+          </p>
+        </div>
+
       </div>
     </main>
   );
