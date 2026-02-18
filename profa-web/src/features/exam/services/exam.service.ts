@@ -155,10 +155,10 @@ export const examService = {
 
         return {
             id: intento.id,
-            templateId: intento.examen_id,
-            config: intento.metadata as ExamConfig,
+            templateId: null, // examen_id no existe en intentos
+            config: intento.config as ExamConfig,
             startedAt: new Date(intento.started_at),
-            endsAt: intento.ended_at ? new Date(intento.ended_at) : null,
+            endsAt: intento.ends_at ? new Date(intento.ends_at) : null,
             questions,
             responses,
             flagged: []

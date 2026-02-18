@@ -19,6 +19,7 @@ export default function ExamSelectPage() {
     });
 
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Mock Topics - In real app, fetch from backend (admin configured)
     const knowledgeTopics = [
@@ -72,22 +73,41 @@ export default function ExamSelectPage() {
     };
 
     const handleStart = async () => {
-        if (config.questionCount < 1) return;
+        if (config.questionCount < 1) {
+            setError("Debes seleccionar al menos una pregunta.");
+            return;
+        }
 
         setLoading(true);
+        setError(null);
+
         try {
             // Translate UI topics to DB topics
             const mappedTopics = config.topics.map(t => TOPIC_MAPPING[t] || t);
             // Remove duplicates and filter potential undefineds
             const uniqueTopics = Array.from(new Set(mappedTopics));
 
+            console.log("Starting session with config:", { ...config, topics: uniqueTopics });
+
             const session = await examService.startSession({
                 ...config,
                 topics: uniqueTopics
             });
+
+            if (!session || !session.id) {
+                throw new Error("La sesión se creó pero no se recibió un ID válido.");
+            }
+
             router.push(`/app/exam/${session.id}`);
-        } catch (error) {
-            console.error("Failed to start session", error);
+        } catch (err: any) {
+            console.error("Failed to start session. Detailed error:", {
+                message: err.message,
+                name: err.name,
+                stack: err.stack,
+                status: err.status || (err.response ? err.response.status : undefined),
+                details: err.details
+            });
+            setError(err.message || "Error al conectar con el servidor de exámenes. Reintenta.");
             setLoading(false);
         }
     };
@@ -280,6 +300,12 @@ export default function ExamSelectPage() {
                             </div>
                         </div>
                     </CyberCard>
+
+                    {error && (
+                        <div className="p-3 rounded-md bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-medium animate-pulse">
+                            ⚠️ {error}
+                        </div>
+                    )}
 
                     <NeonButton
                         onClick={handleStart}

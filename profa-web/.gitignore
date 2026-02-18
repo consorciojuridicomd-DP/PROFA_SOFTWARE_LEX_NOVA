@@ -46,3 +46,5 @@ cleanup_result.txt
 cleanup_users.js
 setup_admin.js
 setup_user_active.js
+
+.vercel
