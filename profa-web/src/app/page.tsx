@@ -42,7 +42,7 @@ export default function Home() {
 
   const handleExit = async () => {
     await logout();
-    window.location.href = "/login";
+    window.location.href = "/salir";
   };
 
   return (
