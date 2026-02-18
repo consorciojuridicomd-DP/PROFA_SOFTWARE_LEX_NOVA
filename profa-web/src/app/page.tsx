@@ -2,6 +2,7 @@
 
 const homeStyles = `
 @keyframes soft-pulse {
+  /* FORCE DEPLOY: 2026-02-17 23:25 */
   0%, 100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 20px rgba(255,85,0,0.4)); }
   50% { transform: scale(1.02); filter: brightness(1.2) drop-shadow(0 0 40px rgba(255,85,0,0.6)); }
 }
