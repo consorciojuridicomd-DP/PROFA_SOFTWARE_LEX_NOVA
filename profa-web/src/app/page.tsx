@@ -14,8 +14,8 @@ const homeStyles = `
   50% { opacity: 1; filter: brightness(2.2) blur(5px); }
 }
 
-@keyframes content-fade-in {
-  from { opacity: 0; transform: translateY(20px); }
+@keyframes content-fade {
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -23,8 +23,13 @@ const homeStyles = `
   animation: eye-glow 3s ease-in-out infinite;
 }
 
-.animate-content {
-  animation: content-fade-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.animate-fade {
+  animation: content-fade 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Forzado de densidad de nieve */
+.snow-container span {
+  z-index: 5 !important;
 }
 `;
 
@@ -40,8 +45,8 @@ export default function Home() {
     <main className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white flex flex-col items-center">
       <style dangerouslySetInnerHTML={{ __html: homeStyles }} />
 
-      {/* ── EFECTO NIEVE (RESTABLECIDO POR MANDATO) ── */}
-      <div className="fixed inset-0 -z-20 pointer-events-none opacity-40">
+      {/* ── EFECTO NIEVE GLOBAL (DETRÁS DEL CONTENIDO PRINCIPAL) ── */}
+      <div className="fixed inset-0 z-0 pointer-events-none opacity-50 snow-container">
         <SnowParticles />
       </div>
 
@@ -56,19 +61,19 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="relative z-10 w-full flex flex-col items-center px-4 py-8 md:px-8 mt-4 animate-content">
+      <div className="relative z-10 w-full flex flex-col items-center px-4 py-6 md:px-8 mt-4 animate-fade">
 
         {/* ── TARJETA PADRE (CAPTURA 2: EL ROBOT ES EL FONDO) ── */}
         <div className="w-full max-w-5xl rounded-[40px] overflow-hidden relative border border-white/10 shadow-[0_0_80px_rgba(0,0,0,1)] bg-[#050505] flex flex-col items-center min-h-[85vh]">
 
-          {/* FONDO ROBOT REAL (CAPTURA 2) */}
+          {/* FONDO ROBOT REAL (CAPTURA 2) - USANDO LA IMAGEN REAL CONFIRMADA */}
           <div className="absolute inset-0 -z-10">
             <img
               src="/assets/robot-portada.png"
-              alt="Robot"
+              alt="Robot Sentinel"
               className="w-full h-full object-cover object-top opacity-100"
             />
-            {/* Gradiente sutil para fundir rítmicamente el robot con los contenidos tal cual la captura */}
+            {/* Gradiente para fundir el robot con los contenidos inferiores tal cual la captura */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/95" />
           </div>
 
@@ -82,10 +87,15 @@ export default function Home() {
             </div>
           </div>
 
-          {/* CONTENIDO (LOGO, TITULOS, BOTON, CARDS) */}
-          <div className="relative z-30 flex flex-col items-center w-full px-4 pt-10 md:pt-16 gap-6 h-full">
+          {/* CAPA DE NIEVE INTERNA (PARA MÁS PROFUNDIDAD) */}
+          <div className="absolute inset-0 z-10 pointer-events-none opacity-30">
+            <SnowParticles />
+          </div>
 
-            <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/40 bg-black/90 px-4 py-1.5 text-[9px] md:text-[10px] text-orange-500 font-black tracking-[0.2em] uppercase">
+          {/* CONTENIDO SUPERIOR (LAYOUT CAPTURA 2) */}
+          <div className="relative z-30 flex flex-col items-center w-full px-4 pt-10 md:pt-16 gap-6 h-full pb-10">
+
+            <div className="inline-flex items-center gap-2 rounded-full border border-orange-500/40 bg-black/90 px-4 py-1.5 text-[9px] md:text-[10px] text-orange-500 font-black tracking-[0.2em] uppercase shadow-[0_0_15px_rgba(255,85,0,0.2)]">
               <span className="h-2 w-2 rounded-full bg-orange-600 animate-pulse" />
               Sistema de Evaluación 31° PROFA Activo
             </div>
@@ -106,7 +116,7 @@ export default function Home() {
               <h2 className="text-[22px] sm:text-[35px] md:text-[68px] font-black tracking-[0.25em] text-orange-600 uppercase drop-shadow-[0_4px_12px_rgba(255,85,0,0.5)]">
                 PROFA SOFTWARE LEX NOVA
               </h2>
-              <p className="text-[10px] md:text-xl text-white font-black uppercase tracking-widest mt-6 md:mt-8 drop-shadow-[0_2px_4px_rgba(0,0,0,1)] px-4">
+              <p className="text-[10px] md:text-xl text-white font-black uppercase tracking-widest mt-6 md:mt-8 drop-shadow-[0_2px_4px_rgba(0,0,0,1)] px-4 opacity-95">
                 Actualización inteligente para la nueva magistratura: destaca en la evaluación.
               </p>
             </div>
@@ -117,9 +127,9 @@ export default function Home() {
               </div>
             </Link>
 
-            {/* FEATURES (MATCH CAPTURA 2: DENTRO DE LA TARJETA) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mt-auto pb-12 px-2">
-              <div className="bg-black/75 border border-white/10 p-5 rounded-2xl backdrop-blur-md shadow-2xl text-left">
+            {/* FEATURES (DENTRO DE LA TARJETA - ABAJO - CAPTURA 2) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mt-auto px-2">
+              <div className="bg-black/75 border border-white/10 p-5 rounded-2xl backdrop-blur-md shadow-2xl text-left hover:border-orange-500/30 transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="bg-orange-600/20 p-2 rounded-lg"><Scale className="text-orange-500 w-5 h-5" /></div>
                   <span className="font-black text-xs uppercase tracking-widest">Simulacros Reales</span>
@@ -127,7 +137,7 @@ export default function Home() {
                 <p className="text-[11px] text-gray-300 font-bold leading-relaxed px-1">Exámenes cronometrados con la misma estructura y rigor que el examen oficial del JNJ.</p>
               </div>
 
-              <div className="bg-black/75 border border-white/10 p-5 rounded-2xl backdrop-blur-md shadow-2xl text-left">
+              <div className="bg-black/75 border border-white/10 p-5 rounded-2xl backdrop-blur-md shadow-2xl text-left hover:border-orange-500/30 transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="bg-orange-600/20 p-2 rounded-lg"><BrainCircuit className="text-orange-500 w-5 h-5" /></div>
                   <span className="font-black text-xs uppercase tracking-widest">Análisis Predictivo</span>
@@ -135,7 +145,7 @@ export default function Home() {
                 <p className="text-[11px] text-gray-300 font-bold leading-relaxed px-1">Detecta tus brechas de conocimiento por categoría y genera planes de estudio automáticos.</p>
               </div>
 
-              <div className="bg-black/75 border border-white/10 p-5 rounded-2xl backdrop-blur-md shadow-2xl text-left">
+              <div className="bg-black/75 border border-white/10 p-5 rounded-2xl backdrop-blur-md shadow-2xl text-left hover:border-orange-500/30 transition-colors">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="bg-orange-600/20 p-2 rounded-lg"><BadgeCheck className="text-orange-500 w-5 h-5" /></div>
                   <span className="font-black text-xs uppercase tracking-widest">Antifraude</span>
@@ -152,7 +162,7 @@ export default function Home() {
           <CommunitySection />
         </div>
 
-        {/* CRÉDITOS FINALES (MATCH CAPTURA 2 EXACTO) */}
+        {/* CREDITOS FINALES (MATCH CAPTURA 2 EXACTO) */}
         <div className="w-full max-w-4xl text-center space-y-4 mb-24 mt-6">
           <div className="h-[1px] w-24 bg-orange-600/30 mx-auto" />
           <p className="text-[10px] md:text-xs text-gray-500 font-black uppercase tracking-[0.5em]">Desarrollado por:</p>
