@@ -1,5 +1,5 @@
 import { CyberCard } from "@/shared/ui/CyberCard"
-import { useAuth } from "@/features/auth/hooks/useAuth"
+import { useAuth } from "@/features/login/hooks/useAuth";
 
 export default function ProfilePage() {
     return (

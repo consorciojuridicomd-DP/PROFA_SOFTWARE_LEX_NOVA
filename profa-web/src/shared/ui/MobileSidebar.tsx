@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/shared/lib/utils"
 import {
     LayoutDashboard,
@@ -16,7 +16,7 @@ import {
     BrainCircuit,
     FileText
 } from "lucide-react"
-import { useAuth } from "@/features/auth/hooks/useAuth"
+import { useAuth } from "@/features/login/hooks/useAuth";
 import { NeonButton } from "@/shared/ui/NeonButton"
 
 const navItems = [
@@ -32,7 +32,13 @@ const navItems = [
 export function MobileSidebar() {
     const [isOpen, setIsOpen] = useState(false)
     const pathname = usePathname()
+    const router = useRouter()
     const { logout, user } = useAuth()
+
+    const handleLogout = async () => {
+        await logout();
+        router.push("/login");
+    };
 
     // Close sidebar when route changes
     useEffect(() => {
@@ -120,7 +126,7 @@ export function MobileSidebar() {
                         </div>
                     </div>
                     <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
                     >
                         <LogOut className="h-4 w-4" />

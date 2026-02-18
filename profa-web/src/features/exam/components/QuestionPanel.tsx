@@ -59,27 +59,27 @@ export function QuestionPanel({
                 </div>
             </div>
 
-            <div className="flex-1 space-y-8">
+            <div className="flex-1 space-y-4 sm:space-y-6 overflow-y-auto">
                 {question.caseContext && (
-                    <div className="bg-primary/10 border-l-4 border-primary p-4 rounded-r-md">
-                        <h4 className="text-sm font-bold text-primary mb-2 uppercase tracking-wide">Hechos del Caso</h4>
-                        <div className="prose prose-sm prose-invert max-w-none text-foreground/90 whitespace-pre-wrap">
+                    <div className="bg-primary/5 border-l-4 border-primary p-3 sm:p-4 rounded-r-lg">
+                        <h4 className="text-[10px] sm:text-xs font-bold text-primary mb-1 sm:mb-2 uppercase tracking-widest opacity-80">Hechos del Caso</h4>
+                        <div className="text-xs sm:text-sm leading-relaxed text-foreground/80 whitespace-pre-wrap italic">
                             {question.caseContext.trim()}
                         </div>
                     </div>
                 )}
 
-
-
-                <p className="text-lg leading-relaxed text-foreground font-medium">
+                <p className="text-sm sm:text-lg leading-relaxed text-foreground font-semibold px-1">
                     {question.stem}
                 </p>
 
-                <OptionList
-                    options={question.options}
-                    selectedIds={selectedOptions}
-                    onSelect={onOptionSelect}
-                />
+                <div className="mt-4 sm:mt-6">
+                    <OptionList
+                        options={question.options}
+                        selectedIds={selectedOptions}
+                        onSelect={onOptionSelect}
+                    />
+                </div>
             </div>
         </CyberCard>
     )

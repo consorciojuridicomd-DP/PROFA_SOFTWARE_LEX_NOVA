@@ -7,7 +7,7 @@ import { CyberCard } from "@/shared/ui/CyberCard";
 import { CommunitySection } from "@/shared/ui/CommunitySection";
 import { getTopRecommendation } from "@/features/study-plan/data";
 import { Activity, BookOpen, Target, Trophy } from "lucide-react";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useAuth } from "@/features/login/hooks/useAuth";
 
 export default function DashboardPage() {
     const { user } = useAuth();

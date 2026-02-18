@@ -1,12 +1,16 @@
 "use client"
 
-/**
- * SnowParticles – CSS-only particle overlay.
- * Renders 40 tiny dots that drift diagonally downward.
- * z-index kept low so it never covers text or cards.
- */
+import { useState, useEffect } from "react"
+
 export function SnowParticles() {
-    // Increased particle count for "abundant snow" effect
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!mounted) return null;
+
     const particles = Array.from({ length: 150 }, (_, i) => i);
 
     return (

@@ -1,58 +1,76 @@
+const homeStyles = `
+@keyframes soft-pulse {
+  0%, 100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 20px rgba(255,85,0,0.4)); }
+  50% { transform: scale(1.02); filter: brightness(1.2) drop-shadow(0 0 40px rgba(255,85,0,0.6)); }
+}
+
+@keyframes robot-breathing {
+  0%, 100% { transform: translateY(0) scale(1.01); }
+  50% { transform: translateY(-10px) scale(1.03); }
+}
+
+@keyframes eye-blink-red {
+  0%, 100% { opacity: 1; transform: scale(1); filter: blur(0px); }
+  50% { opacity: 0.3; transform: scale(0.8); filter: blur(2px); }
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 4s ease-in-out infinite;
+}
+
+.animate-robot {
+  animation: robot-breathing 8s ease-in-out infinite;
+}
+
+.animate-eye-blink {
+  animation: eye-blink-red 3s ease-in-out infinite;
+}
+`;
+
 import { CyberCard } from "@/shared/ui/CyberCard";
 import { NeonButton } from "@/shared/ui/NeonButton";
 import { SnowParticles } from "@/shared/ui/SnowParticles";
 import { CommunitySection } from "@/shared/ui/CommunitySection";
 import Link from "next/link";
-import { BadgeCheck, BrainCircuit, Scale } from "lucide-react";
+import { BadgeCheck, BrainCircuit, Scale, LogIn } from "lucide-react";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen w-full overflow-hidden">
+    <main className="relative min-h-screen w-full overflow-hidden font-sans text-white flex flex-col items-center justify-center">
+      <style dangerouslySetInnerHTML={{ __html: homeStyles }} />
 
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8 md:px-8 md:py-12">
+      {/* A) GLOBAL LAYERS */}
+      <div className="fixed inset-0 -z-30 opacity-10 pointer-events-none bg-[url('/grid.svg')] mix-blend-overlay" />
+      <div className="fixed inset-0 -z-20 pointer-events-none opacity-40">
+        <SnowParticles />
+      </div>
+
+      <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 py-8 md:px-8">
 
         {/* ── Central Card (Robot Container) ── */}
         <div
-          className="w-full max-w-5xl flex flex-col items-center text-center gap-6 md:gap-10 rounded-3xl px-6 py-10 md:px-14 md:py-16 relative overflow-hidden ring-1 ring-white/10 shadow-2xl bg-black/20 cyber-grid"
+          className="w-full max-w-5xl flex flex-col items-center text-center gap-6 md:gap-10 rounded-3xl px-6 py-10 md:px-14 md:py-16 relative overflow-hidden ring-1 ring-white/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] bg-black/40 backdrop-blur-xl animate-robot"
         >
-          {/* 1. Robot Background (Inside Content Box) */}
+          {/* 1. Robot Background (FORZADO AL FRENTE DEL CONTAINER) */}
           <div
-            className="absolute inset-0 -z-20"
+            className="absolute inset-0 bg-[url('/assets/login-robot-bg.png')] bg-cover bg-center z-0"
             style={{
-              backgroundImage: "url('/assets/login-robot-bg.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "center top",
               opacity: 1,
-              filter: "brightness(1.1) contrast(1.1) saturate(1.1)",
-              animation: "float-robot 6s ease-in-out infinite, robot-glitch 10s step-end infinite"
+              filter: "brightness(1.5) contrast(1.2) saturate(1.5)",
             }}
           />
 
-          {/* Digital Scanner Effect */}
-          <div className="absolute inset-0 -z-18 pointer-events-none overflow-hidden opacity-20">
-            <div className="absolute left-0 right-0 h-[2px] bg-primary shadow-[0_0_15px_#FF5500] animate-[scanner-line_8s_linear_infinite]" />
-          </div>
+          {/* Capa de oscurecimiento interna para legibilidad del texto */}
+          <div className="absolute inset-0 bg-black/40 z-[1]" />
 
-          {/* 1.1 Eye Glow Effects - RED BLINKING AS REQUESTED */}
-          <div className="absolute inset-x-0 top-[22%] -z-15 flex justify-center gap-12 pointer-events-none overflow-visible">
-            {/* Ojo Izquierdo */}
-            <div className="relative">
-              <div className="w-4 h-4 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] blur-[1px] animate-[eye-blink-red_4s_infinite]" />
-              <div className="absolute inset-0 w-4 h-4 rounded-full bg-white opacity-40 blur-sm scale-50" />
+          {/* 1. Eye Glow Effects - RED PULSING (FRENTE) */}
+          <div className="absolute inset-x-0 top-[38%] z-[2] flex justify-center gap-14 pointer-events-none">
+            <div className="relative left-[-3%]">
+              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] animate-eye-blink" />
             </div>
-            {/* Ojo Derecho */}
-            <div className="relative">
-              <div className="w-4 h-4 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] blur-[1px] animate-[eye-blink-red_4s_infinite_0.2s]" />
-              <div className="absolute inset-0 w-4 h-4 rounded-full bg-white opacity-40 blur-sm scale-50" />
+            <div className="relative left-[5%]">
+              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] animate-eye-blink" />
             </div>
-          </div>
-
-          {/* 2. Dark Scrim (Inside Content Box) - to ensure text legibility */}
-          <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/30 to-black/80" />
-
-          {/* 3. Snow Effects (Inside Content Box - falling on robot) */}
-          <div className="absolute inset-0 -z-0 opacity-80 mix-blend-screen pointer-events-none">
-            <SnowParticles />
           </div>
 
           {/* ── Content (z-10) ── */}
@@ -61,7 +79,6 @@ export default function Home() {
             {/* ── Badge pill ── */}
             <div
               className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-black/40 backdrop-blur-md px-3 py-1 md:px-4 md:py-1.5 text-xs md:text-sm text-primary shadow-[0_0_15px_rgba(255,85,0,0.3)]"
-              style={{ animation: "pulse-ring 2.5s ease-in-out infinite" }}
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
@@ -70,36 +87,21 @@ export default function Home() {
               Sistema de Evaluación 31° PROFA Activo
             </div>
 
-            {/* ── Logo ── */}
-            <img
-              src="/assets/logo-derecho-peru.png"
-              alt="Derecho Perú Logo"
-              className="h-24 w-24 md:h-32 md:w-32 object-contain rounded-full drop-shadow-[0_0_25px_rgba(255,85,0,0.6)]"
-              style={{
-                animation: "float-glow 4s ease-in-out infinite",
-              }}
-            />
+            {/* ── Logo with pulse ── */}
+            <div className="relative group animate-soft-pulse">
+              <img
+                src="/assets/logo-derecho-peru.png"
+                alt="Derecho Perú Logo"
+                className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-full drop-shadow-[0_0_30px_rgba(255,85,0,0.8)] transition-transform duration-500 group-hover:scale-110"
+              />
+            </div>
 
             {/* ── Title Block ── */}
             <div className="space-y-4 px-2">
-              <h1
-                className="text-3xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-tight"
-                style={{
-                  color: "#FFFFFF",
-                  textShadow: "0 4px 30px rgba(0,0,0,0.9), 0 2px 10px rgba(0,0,0,0.8)",
-                }}
-              >
+              <h1 className="text-4xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-none text-white drop-shadow-[0_5px_15px_rgba(0,0,0,1)] uppercase italic">
                 DERECHO PERÚ
               </h1>
-
-              <h2
-                className="text-lg sm:text-3xl md:text-4xl font-bold tracking-wide break-words max-w-full italic"
-                style={{
-                  color: "#FF5500",
-                  textShadow: "0 0 15px rgba(255,85,0,0.4), 0 2px 5px rgba(0,0,0,1)",
-                  WebkitTextStroke: "0.5px rgba(255,255,255,0.1)",
-                }}
-              >
+              <h2 className="text-xl sm:text-4xl md:text-5xl font-extrabold tracking-widest text-primary drop-shadow-[0_0_20px_rgba(255,85,0,0.6)] uppercase">
                 PROFA SOFTWARE Lex NOVA
               </h2>
             </div>
@@ -117,12 +119,22 @@ export default function Home() {
 
             {/* ── Buttons ── */}
             <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 pt-4 w-full sm:w-auto">
-              <Link href="/auth/login" className="w-full sm:w-auto">
-                <NeonButton size="lg" className="w-full sm:w-48 text-base md:text-lg font-bold tracking-wider uppercase shadow-lg shadow-primary/20">
-                  Ingresar
-                </NeonButton>
-              </Link>
+              <Link href="/login" className="w-full sm:w-auto flex flex-col items-center">
+                <button
+                  className="group relative w-24 h-24 rounded-full bg-gradient-to-br from-[#FF3300] to-[#990000] p-[2px] shadow-[0_0_30px_rgba(255,51,0,0.5)] hover:shadow-[0_0_60px_rgba(255,51,0,0.7)] transition-all duration-500 hover:scale-110 active:scale-95 flex items-center justify-center overflow-visible"
+                >
+                  <div className="absolute inset-0 rounded-full blur-[15px] bg-[#FF3300]/40 group-hover:blur-[25px] transition-all animate-pulse"></div>
+                  <div className="relative w-full h-full rounded-full bg-black flex items-center justify-center overflow-hidden border border-white/10 group-hover:border-[#FF3300]/50">
+                    <LogIn className="w-10 h-10 text-white group-hover:scale-125 transition-transform duration-500" />
+                    <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+                  </div>
 
+                  {/* Tooltip Cyber */}
+                  <span className="absolute -bottom-12 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[10px] font-black text-white uppercase tracking-[0.4em] whitespace-nowrap bg-black/90 px-6 py-2 rounded-full border border-[#FF3300]/50 shadow-[0_0_20px_rgba(255,51,0,0.3)] backdrop-blur-md">
+                    Ingresar al Sistema
+                  </span>
+                </button>
+              </Link>
             </div>
 
             <div id="features" className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 pt-8 text-left w-full scroll-mt-24">
@@ -159,32 +171,17 @@ export default function Home() {
           </div>
         </div>
 
-        {/* ── Footer / Credits Section (Restored) ── */}
+        {/* ── Footer / Credits ── */}
         <div className="mt-12 w-full max-w-4xl text-center space-y-8 relative z-20">
-
-          {/* Social & Contact Buttons */}
           <CommunitySection className="bg-black/40 border-primary/20 backdrop-blur-md" />
-
-          {/* Creator Credit */}
           <div className="space-y-2">
-            <p className="text-sm md:text-base text-muted-foreground font-medium">
-              Desarrollado por:
-            </p>
+            <p className="text-sm md:text-base text-muted-foreground font-medium">Desarrollado por:</p>
             <div className="inline-block p-4 rounded-xl bg-black/50 border border-primary/10 backdrop-blur-sm">
-              <p className="text-base md:text-lg text-white font-bold tracking-wide">
-                Mg. Sergio J. De la Cruz Zúñiga
-              </p>
-              <p className="text-xs md:text-sm text-primary/90 mt-1 uppercase tracking-wider">
-                Especialista en Derecho Procesal Penal e Inteligencia Artificial - Perito Informático
-              </p>
+              <p className="text-base md:text-lg text-white font-bold tracking-wide">Mg. Sergio J. De la Cruz Zúñiga</p>
+              <p className="text-xs md:text-sm text-primary/90 mt-1 uppercase tracking-wider">Especialista en Derecho Procesal Penal e Inteligencia Artificial - Perito Informático</p>
             </div>
           </div>
-
-          <p className="text-xs text-muted-foreground/50">
-            © 2026 Derecho Perú. Todos los derechos reservados.
-          </p>
         </div>
-
       </div>
     </main>
   );

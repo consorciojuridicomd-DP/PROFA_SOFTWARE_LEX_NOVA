@@ -1,289 +1,124 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@/shared/lib/supabase/client"
-import { CyberCard } from "@/shared/ui/CyberCard"
-import { NeonButton } from "@/shared/ui/NeonButton"
-import { Toggle } from "@/shared/ui/Toggle"
-import { Users, Shield, ShieldOff, UserCheck, UserX, RefreshCw, Search } from "lucide-react"
-
-interface UserProfile {
-    id: string;
-    email: string;
-    full_name: string | null;
-    dni: string | null;
-    role: string;
-    is_active: boolean;
-    created_at: string;
-}
+import { adminService } from "@/features/admin/services/admin.service"
+import { UserManager } from "@/features/admin/components/UserManager"
+import { RefreshCw, LayoutDashboard, Users, Activity, ShieldCheck } from "lucide-react"
+import Link from "next/link"
 
 export default function AdminUsersPage() {
-    const [users, setUsers] = useState<UserProfile[]>([]);
+    const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [toggling, setToggling] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [stats, setStats] = useState({ total: 0, active: 0, inactive: 0 });
 
-    const fetchUsers = async () => {
+    const loadData = async () => {
         setLoading(true);
-        const supabase = createClient();
-        const { data, error } = await supabase.rpc('admin_get_users');
+        const { data, error } = await adminService.getUsers();
         if (!error && data) {
-            setUsers(Array.isArray(data) ? data : []);
+            setUsers(data);
+            setStats({
+                total: data.length,
+                active: data.filter((u: any) => u.is_active).length,
+                inactive: data.filter((u: any) => !u.is_active).length
+            });
         }
         setLoading(false);
     };
 
     useEffect(() => {
-        fetchUsers();
+        loadData();
     }, []);
 
-    const toggleActive = async (userId: string, newStatus: boolean) => {
-        setToggling(userId);
-        const supabase = createClient();
-        const { error } = await supabase.rpc('toggle_user_active', {
-            p_user_id: userId,
-            p_is_active: newStatus,
-        });
+    const handleToggleStatus = async (userId: string, currentStatus: boolean) => {
+        const { error } = await adminService.toggleUserStatus(userId, !currentStatus);
         if (!error) {
-            setUsers(prev => prev.map(u =>
-                u.id === userId ? { ...u, is_active: newStatus } : u
-            ));
-        }
-        setToggling(null);
-    };
-
-    const changeRole = async (userId: string, newRole: string) => {
-        const supabase = createClient();
-        const { error } = await supabase.rpc('admin_set_role', {
-            p_user_id: userId,
-            p_role: newRole,
-        });
-        if (!error) {
-            setUsers(prev => prev.map(u =>
-                u.id === userId ? { ...u, role: newRole } : u
-            ));
+            setUsers(prev => prev.map(u => u.id === userId ? { ...u, is_active: !currentStatus } : u));
+            setStats(prev => ({
+                ...prev,
+                active: currentStatus ? prev.active - 1 : prev.active + 1,
+                inactive: currentStatus ? prev.inactive + 1 : prev.inactive - 1
+            }));
         }
     };
 
-    const resetPassword = async (userId: string) => {
-        const supabase = createClient();
-        const { error } = await supabase.rpc('admin_reset_password', {
-            p_user_id: userId,
-            p_new_password: 'Password123!',
-        });
-        if (!error) {
-            alert("Contraseña restablecida a: Password123!");
-        } else {
-            alert("Error al restablecer contraseña: " + error.message);
-        }
-    };
-
-    const deleteUser = async (userId: string) => {
-        if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
-        const supabase = createClient();
-        const { error } = await supabase.rpc('admin_reject_user', {
-            p_user_id: userId
-        });
+    const handleDelete = async (userId: string) => {
+        if (!confirm("⚠️ ¿ESTÁS SEGURO DE ELIMINAR ESTE ASPIRANTE DEFINITIVAMENTE?")) return;
+        const { error } = await adminService.deleteUser(userId);
         if (!error) {
             setUsers(prev => prev.filter(u => u.id !== userId));
-        } else {
-            alert("Error al eliminar: " + error.message);
+            loadData(); // Re-fetch for accurate stats
         }
     };
 
-    const filteredUsers = users.filter(user =>
-        (user.full_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-        (user.email?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-        (user.dni || "").includes(searchTerm)
-    );
+    const handleResetPassword = async (userId: string) => {
+        const newOtp = prompt("Ingrese el nuevo código OTP de 4 dígitos (Ej. 1234):", "0000");
+        if (newOtp && newOtp.length === 4) {
+            const result = await adminService.resetPassword(userId, newOtp);
+            if (result.success) {
+                alert("✅ Clave actualizada correctamente.");
+            } else {
+                alert("❌ Error: Funcionalidad de reset requiere API / Edge Function operativa.");
+            }
+        }
+    };
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="min-h-screen bg-[#050505] text-white p-6 md:p-10 space-y-10">
+            {/* Header Cyber */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
-                    <h1 className="text-2xl font-bold flex items-center gap-3">
-                        <Users className="h-7 w-7 text-primary" />
-                        Gestión de Usuarios
+                    <div className="flex items-center gap-3 text-[#FF3300] font-black text-[10px] uppercase tracking-[0.5em] mb-2">
+                        <Activity size={14} className="animate-pulse" /> Nodo de Administración Central
+                    </div>
+                    <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight flex items-center gap-4">
+                        Gestión de <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF3300] to-white">Aspirantes</span>
                     </h1>
-                    <p className="text-muted-foreground mt-1">
-                        Controla el acceso de los usuarios al sistema
-                    </p>
                 </div>
-                <NeonButton onClick={fetchUsers} variant="outline" className="gap-2 self-start md:self-auto">
-                    <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                    Actualizar
-                </NeonButton>
+
+                <div className="flex gap-4">
+                    <button
+                        onClick={loadData}
+                        className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-[#FF3300]/50 transition-all group"
+                    >
+                        <RefreshCw className={`w-6 h-6 text-gray-400 group-hover:text-[#FF3300] ${loading ? 'animate-spin' : 'transition-transform group-hover:rotate-180'}`} />
+                    </button>
+                    <Link href="/dashboard" className="flex items-center gap-3 bg-[#FF3300] text-black font-black px-6 py-4 rounded-2xl hover:bg-white transition-all text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(255,51,0,0.3)]">
+                        <LayoutDashboard size={16} /> Panel Control
+                    </Link>
+                </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <CyberCard title="" className="!p-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Users className="h-5 w-5 text-primary" />
-                        </div>
+            {/* Micro Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {[
+                    { label: "Base Total", val: stats.total, icon: Users, color: "text-white" },
+                    { label: "Sistemas Activos", val: stats.active, icon: ShieldCheck, color: "text-[#00FF66]" },
+                    { label: "Acceso Bloqueado", val: stats.inactive, icon: ShieldCheck, color: "text-[#FF3300]" },
+                ].map((s, i) => (
+                    <div key={i} className="bg-black/40 border border-white/5 rounded-3xl p-6 flex items-center justify-between group hover:border-white/20 transition-all">
                         <div>
-                            <p className="text-2xl font-bold">{users.length}</p>
-                            <p className="text-xs text-muted-foreground">Total Usuarios</p>
+                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">{s.label}</p>
+                            <p className={`text-4xl font-black ${s.color}`}>{s.val}</p>
                         </div>
+                        <s.icon size={32} className="text-gray-800 group-hover:text-white/20 transition-colors" />
                     </div>
-                </CyberCard>
-                <CyberCard title="" className="!p-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                            <UserCheck className="h-5 w-5 text-green-500" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold">{users.filter(u => u.is_active).length}</p>
-                            <p className="text-xs text-muted-foreground">Activos</p>
-                        </div>
-                    </div>
-                </CyberCard>
-                <CyberCard title="" className="!p-4">
-                    <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                            <UserX className="h-5 w-5 text-red-500" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold">{users.filter(u => !u.is_active).length}</p>
-                            <p className="text-xs text-muted-foreground">Pendientes / Suspendidos</p>
-                        </div>
-                    </div>
-                </CyberCard>
+                ))}
             </div>
 
-            {/* Search & Table */}
-            <CyberCard title="" className="!p-0 overflow-hidden">
-                <div className="p-4 border-b border-border">
-                    <div className="relative max-w-md">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por nombre, email o DNI..."
-                            className="w-full pl-9 pr-4 py-2 bg-muted/20 border border-border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
+            {/* Main Manager Component */}
+            {loading ? (
+                <div className="h-64 flex flex-col items-center justify-center gap-4 border-2 border-dashed border-white/5 rounded-[3rem]">
+                    <RefreshCw className="w-10 h-10 text-[#FF3300] animate-spin" />
+                    <p className="text-[10px] font-black text-gray-600 uppercase tracking-[0.4em]">Sincronizando con el Núcleo...</p>
                 </div>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead>
-                            <tr className="border-b border-border bg-card/50">
-                                <th className="px-6 py-4 font-medium text-muted-foreground">Usuario</th>
-                                <th className="px-6 py-4 font-medium text-muted-foreground">DNI / Email</th>
-                                <th className="px-6 py-4 font-medium text-muted-foreground">Rol</th>
-                                <th className="px-6 py-4 font-medium text-muted-foreground">Estado</th>
-                                <th className="px-6 py-4 font-medium text-muted-foreground text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {loading ? (
-                                <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                                        <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                                        Cargando usuarios...
-                                    </td>
-                                </tr>
-                            ) : filteredUsers.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                                        No se encontraron usuarios.
-                                    </td>
-                                </tr>
-                            ) : (
-                                filteredUsers.map((user) => (
-                                    <tr key={user.id} className="border-b border-border/50 hover:bg-white/5 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm border border-primary/20">
-                                                    {(user.full_name || user.email)?.[0]?.toUpperCase() || '?'}
-                                                </div>
-                                                <span className="font-medium">{user.full_name || 'Sin nombre'}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 text-muted-foreground">
-                                            <div className="flex flex-col">
-                                                <span className="text-white/80">{user.dni || "—"}</span>
-                                                <span className="text-xs">{user.email}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <select
-                                                value={user.role}
-                                                onChange={(e) => changeRole(user.id, e.target.value)}
-                                                disabled={user.role === 'admin'}
-                                                className={`bg-background border border-border rounded-md px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary ${user.role === 'admin' ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                            >
-                                                <option value="student">Estudiante</option>
-                                                <option value="docente">Docente</option>
-                                                <option value="admin">Admin</option>
-                                            </select>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {user.is_active ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
-                                                    <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
-                                                    Activo
-                                                </span>
-                                            ) : (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/20">
-                                                    <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
-                                                    Inactivo
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-center">
-                                            <div className="flex justify-center items-center gap-2">
-                                                {/* Toggle Status */}
-                                                {toggling === user.id ? (
-                                                    <RefreshCw className="h-5 w-5 animate-spin text-muted-foreground" />
-                                                ) : (
-                                                    <div title={user.role === 'admin' ? "Admin protegido" : "Cambiar estado"}>
-                                                        <Toggle
-                                                            checked={user.is_active}
-                                                            onChange={(checked) => toggleActive(user.id, checked)}
-                                                            disabled={user.role === 'admin'}
-                                                            labels={{ on: "ON", off: "OFF" }}
-                                                        />
-                                                    </div>
-                                                )}
-
-                                                {/* Reset Password */}
-                                                <button
-                                                    onClick={() => resetPassword(user.id)}
-                                                    className="p-1.5 hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-500 rounded-md transition-colors"
-                                                    title="Restablecer Contraseña"
-                                                >
-                                                    <Shield className="h-4 w-4" />
-                                                </button>
-
-                                                {/* Delete User (Protected) */}
-                                                {user.role !== 'admin' && (
-                                                    <button
-                                                        onClick={() => deleteUser(user.id)}
-                                                        className="p-1.5 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 rounded-md transition-colors"
-                                                        title="Eliminar Usuario"
-                                                    >
-                                                        <UserX className="h-4 w-4" />
-                                                    </button>
-                                                )}
-                                                {user.role === 'admin' && (
-                                                    <span title="Protegido">
-                                                        <Shield className="h-4 w-4 text-primary/30" />
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </CyberCard>
+            ) : (
+                <UserManager
+                    users={users}
+                    onToggleStatus={handleToggleStatus}
+                    onDelete={handleDelete}
+                    onResetPassword={handleResetPassword}
+                />
+            )}
         </div>
     );
 }

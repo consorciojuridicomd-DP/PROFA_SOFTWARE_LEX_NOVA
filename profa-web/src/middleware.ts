@@ -40,23 +40,39 @@ async function updateSession(request: NextRequest) {
 
     if (isProtectedPath && !user) {
         const url = request.nextUrl.clone()
-        url.pathname = '/auth/login'
+        url.pathname = '/login'
         return NextResponse.redirect(url)
     }
 
     // Admin protection (RBAC)
     if (user && (path.startsWith('/admin') || path.startsWith('/dashboard'))) {
-        // We must verify if the user is actually an admin
-        const { data: profile } = await supabase
-            .from('user_profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
+        try {
+            // We must verify if the user is actually an admin
+            const { data: profile, error: profileError } = await supabase
+                .from('user_profiles')
+                .select('role')
+                .eq('id', user.id)
+                .single()
 
-        if (profile?.role !== 'admin') {
-            const url = request.nextUrl.clone()
-            url.pathname = '/app' // Redirect unauthorized users to student app
-            return NextResponse.redirect(url)
+            if (profileError) {
+                console.error("MIDDLEWARE_PROFILE_ERROR:", profileError);
+                // If there's a schema error, we might want to allow the request to proceed if we trust the auth role,
+                // or redirect to a safe error page. For now, let's redirect to /login with a specific error.
+                if (profileError.message.includes("schema")) {
+                    const url = request.nextUrl.clone()
+                    url.pathname = '/login'
+                    url.searchParams.set('error', 'schema_error')
+                    return NextResponse.redirect(url)
+                }
+            }
+
+            if (profile?.role !== 'admin') {
+                const url = request.nextUrl.clone()
+                url.pathname = '/app' // Redirect unauthorized users to student app
+                return NextResponse.redirect(url)
+            }
+        } catch (e) {
+            console.error("MIDDLEWARE_CRITICAL_EXCEPTION:", e);
         }
     }
 
