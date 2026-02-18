@@ -155,7 +155,7 @@ export const examService = {
 
         return {
             id: intento.id,
-            templateId: null, // examen_id no existe en intentos
+            templateId: intento.examen_id || "dynamic",
             config: intento.config as ExamConfig,
             startedAt: new Date(intento.started_at),
             endsAt: intento.ends_at ? new Date(intento.ends_at) : null,
