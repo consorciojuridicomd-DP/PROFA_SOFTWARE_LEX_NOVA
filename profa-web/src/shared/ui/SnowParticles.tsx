@@ -16,34 +16,40 @@ export function SnowParticles() {
     return (
         <div className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 1 }}>
             {particles.map((i) => {
-                const size = 2 + Math.random() * 3.5;              // 2–5.5px (larger snowflakes)
+                const size = 1 + Math.random() * 2;                // 1–3px
                 const left = Math.random() * 100;                  // random horizontal %
-                const delay = Math.random() * 10;                  // shorter stagger for immediate effect
-                const duration = 8 + Math.random() * 14;           // 8–22s (faster fall)
-                const isAmber = Math.random() > 0.7;               // 30% amber, 70% white
-                const opacity = 0.4 + Math.random() * 0.6;         // 0.4–1.0 opacity
-                const animName = `snowfall-${(i % 3) + 1}`;
+                const delay = Math.random() * -30;                 // negative delay for immediate fill
+                const duration = 15 + Math.random() * 20;          // 15–35s (slow fall)
+                const opacity = 0.2 + Math.random() * 0.4;         // 0.2–0.6 opacity (low-medium)
+                const drift = (Math.random() - 0.5) * 60;          // lateral drift in px
 
                 return (
-                    <span
+                    <div
                         key={i}
+                        className="absolute top-[-5%]"
                         style={{
-                            position: "absolute",
-                            top: "-5vh",
                             left: `${left}%`,
                             width: `${size}px`,
                             height: `${size}px`,
                             borderRadius: "50%",
-                            background: isAmber
-                                ? "rgba(255, 170, 50, 0.8)"
-                                : "rgba(255, 255, 255, 0.8)",
-                            boxShadow: isAmber
-                                ? "0 0 6px rgba(255,120,0,0.6)"
-                                : "0 0 5px rgba(255,255,255,0.5)",
+                            background: "rgba(255, 255, 255, 0.8)",
                             opacity: opacity,
-                            animation: `${animName} ${duration}s ${delay}s linear infinite`,
+                            filter: `blur(${size > 2 ? '0.5px' : '0px'})`,
+                            animation: `snow-drift-${i} ${duration}s linear infinite`,
+                            animationDelay: `${delay}s`,
                         }}
-                    />
+                    >
+                        <style>{`
+                            @keyframes snow-drift-${i} {
+                                0% {
+                                    transform: translateY(0) translateX(0);
+                                }
+                                100% {
+                                    transform: translateY(110vh) translateX(${drift}px);
+                                }
+                            }
+                        `}</style>
+                    </div>
                 );
             })}
         </div>

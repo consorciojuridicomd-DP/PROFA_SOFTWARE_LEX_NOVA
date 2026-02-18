@@ -9,7 +9,7 @@ import { Eye, EyeOff, RotateCcw, ShieldCheck, User as UserIcon, LogIn, Sparkles,
 
 export function LoginForm() {
     const [email, setEmail] = useState("");
-    const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+    const [otp, setOtp] = useState(["", "", "", ""]);
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -43,14 +43,14 @@ export function LoginForm() {
         newOtp[index] = val;
         setOtp(newOtp);
 
-        if (val && index < 5) {
+        if (val && index < 3) {
             otpRefs.current[index + 1]?.focus();
         }
     };
 
     const clearForm = () => {
         setEmail("");
-        setOtp(["", "", "", "", "", ""]);
+        setOtp(["", "", "", ""]);
         setError(null);
         setIsAdminDetected(false);
         emailInputRef.current?.focus();

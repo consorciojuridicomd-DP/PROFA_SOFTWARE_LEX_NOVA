@@ -17,8 +17,8 @@ const SOCIAL_NETWORKS = [
 const CONTACT_INFO = [
     { name: "+51 906 776 270", url: "https://wa.me/51906776270", icon: <MessageCircle className="h-4 w-4" />, label: "WhatsApp" },
     { name: "+51 990 308 096", url: "tel:+51990308096", icon: <Phone className="h-4 w-4" />, label: "Llamar" },
-    { name: "derechoperuredes@gmail.com", url: "mailto:derechoperuredes@gmail.com", icon: <Mail className="h-4 w-4" />, label: "Email Redes" },
-    { name: "consorciojuridicomd@gmail.com", url: "mailto:consorciojuridicomd@gmail.com", icon: <Mail className="h-4 w-4" />, label: "Email Consorcio" },
+    { name: "DERECHOPERUREDES@GMAIL.COM", url: "mailto:DERECHOPERUREDES@GMAIL.COM", icon: <Mail className="h-4 w-4" />, label: "Email Redes" },
+    { name: "CONSORCIOJURIDICOMD@GMAIL.COM", url: "mailto:CONSORCIOJURIDICOMD@GMAIL.COM", icon: <Mail className="h-4 w-4" />, label: "Email Consorcio" },
 ];
 
 interface CommunitySectionProps {
@@ -28,52 +28,48 @@ interface CommunitySectionProps {
 
 export function CommunitySection({ compact = false, className }: CommunitySectionProps) {
     return (
-        <CyberCard className={`bg-card/30 backdrop-blur-md border-primary/20 ${className}`}>
-            <div className={`flex ${compact ? 'flex-col gap-6' : 'flex-col md:flex-row items-start md:items-center justify-between gap-6'} p-2`}>
+        <CyberCard className={`bg-black/40 backdrop-blur-xl border-orange-500/20 shadow-[0_0_20px_rgba(255,85,0,0.1)] ${className}`}>
+            <div className={`flex ${compact ? 'flex-col gap-6' : 'flex-col md:flex-row items-center justify-between gap-8'} p-6`}>
 
                 {/* Header Section */}
-                <div className="flex items-center gap-4 shrink-0">
-                    <div className="p-3 rounded-full bg-primary/20 text-primary shrink-0">
-                        <Share2 className="w-6 h-6" />
+                <div className="flex items-center gap-5 shrink-0">
+                    <div className="p-4 rounded-xl bg-orange-600/10 text-orange-500 border border-orange-500/20 shadow-[0_0_15px_rgba(255,85,0,0.2)]">
+                        <Share2 className="w-7 h-7" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold">Únete a la Comunidad</h3>
-                        <p className="text-sm text-muted-foreground">Síguenos para más contenido jurídico.</p>
+                        <h3 className="text-xl font-black text-white uppercase tracking-wider">Únete a la Comunidad</h3>
+                        <p className="text-sm text-gray-400 font-medium">Síguenos para más contenido jurídico.</p>
                     </div>
                 </div>
 
-                {/* Links Container */}
-                <div className="flex flex-col gap-4 w-full md:w-auto">
+                {/* Content Container (Contacts + Socials) */}
+                <div className="flex flex-col gap-6 w-full md:w-auto">
 
-                    {/* 1. Social Icons Row (Icon Only) */}
-                    <div className="flex flex-wrap gap-2 justify-center md:justify-end">
-                        {SOCIAL_NETWORKS.map(link => (
-                            <NeonButton
+                    {/* 1. Contact Info Grid (PROMPT ÚNICO) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+                        {CONTACT_INFO.map(link => (
+                            <button
                                 key={link.name}
-                                variant="outline"
-                                size="icon"
                                 onClick={() => window.open(link.url, "_blank")}
-                                className="h-10 w-10 border-primary/30 hover:bg-primary/20"
-                                title={link.name}
+                                className="flex items-center gap-3 text-[12px] font-bold text-gray-300 hover:text-orange-500 transition-colors uppercase tracking-tight group"
                             >
-                                {link.icon}
-                            </NeonButton>
+                                <span className="text-orange-600/60 group-hover:text-orange-500 group-hover:drop-shadow-[0_0_5px_rgba(255,85,0,0.5)]">{link.icon}</span>
+                                <span className="truncate">{link.name}</span>
+                            </button>
                         ))}
                     </div>
 
-                    {/* 2. Contact Info Grid (Text Visible) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {CONTACT_INFO.map(link => (
-                            <NeonButton
+                    {/* 2. Social Networks (SQUARE BUTTONS - BELOW CONTACTS) */}
+                    <div className="flex flex-wrap gap-4 justify-center md:justify-end">
+                        {SOCIAL_NETWORKS.map(link => (
+                            <button
                                 key={link.name}
-                                variant="ghost"
-                                size="sm"
                                 onClick={() => window.open(link.url, "_blank")}
-                                className="justify-start gap-2 h-auto py-2 px-3 text-xs font-mono text-muted-foreground hover:text-primary border border-transparent hover:border-primary/20"
+                                className="h-14 w-14 flex items-center justify-center border border-orange-500/30 bg-black hover:bg-orange-600/20 hover:border-orange-500 transition-all text-white shadow-[0_0_10px_rgba(0,0,0,0.5)] hover:shadow-[0_0_15px_rgba(255,85,0,0.3)]"
+                                title={link.name}
                             >
                                 {link.icon}
-                                <span className="truncate">{link.name}</span>
-                            </NeonButton>
+                            </button>
                         ))}
                     </div>
                 </div>
