@@ -18,7 +18,8 @@ export function useAuth() {
             const { data: { session } } = await supabase.auth.getSession();
             const userWithMeta = session?.user ? {
                 ...session.user,
-                full_name: session.user.user_metadata?.full_name || "Aspirante"
+                full_name: session.user.user_metadata?.full_name || "Aspirante",
+                role: session.user.user_metadata?.role || "student"
             } : null;
             setUser(userWithMeta as any);
             setLoading(false);
@@ -30,7 +31,8 @@ export function useAuth() {
             (_event, session) => {
                 const userWithMeta = session?.user ? {
                     ...session.user,
-                    full_name: session.user.user_metadata?.full_name || "Aspirante"
+                    full_name: session.user.user_metadata?.full_name || "Aspirante",
+                    role: session.user.user_metadata?.role || "student"
                 } : null;
                 setUser(userWithMeta as any);
                 setLoading(false);
