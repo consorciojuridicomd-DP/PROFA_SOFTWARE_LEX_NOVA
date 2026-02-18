@@ -1,55 +1,57 @@
 "use client";
 
-@keyframes soft - pulse {
+const homeStyles = `
+@keyframes soft-pulse {
   /* FORCE DEPLOY: 2026-02-17 23:32 - IMPACTO TOTAL */
-  0 %, 100 % { transform: scale(1); filter: brightness(1) drop- shadow(0 0 20px rgba(255, 85, 0, 0.4));
+  0%, 100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 20px rgba(255, 85, 0, 0.4));
 }
-50 % { transform: scale(1.05); filter: brightness(1.3) drop- shadow(0 0 50px rgba(255, 85, 0, 0.7)); }
-}
-
-@keyframes laser - beam {
-  0 % { transform: scaleX(0); opacity: 0; }
-  50 % { transform: scaleX(1); opacity: 1; filter: blur(2px); }
-  100 % { transform: scaleX(0); opacity: 0; }
+50% { transform: scale(1.05); filter: brightness(1.3) drop-shadow(0 0 50px rgba(255, 85, 0, 0.7)); }
 }
 
-@keyframes logo - explosion {
-  0 % { transform: scale(0.5); opacity: 0; filter: brightness(2) blur(20px); }
-  50 % { transform: scale(1.2); opacity: 0.8; filter: brightness(3) blur(10px); }
-  100 % { transform: scale(1); opacity: 1; filter: brightness(1) blur(0px); }
+@keyframes laser-beam {
+  0% { transform: scaleX(0); opacity: 0; }
+  50% { transform: scaleX(1); opacity: 1; filter: blur(2px); }
+  100% { transform: scaleX(0); opacity: 0; }
 }
 
-@keyframes robot - breathing {
-  0 %, 100 % { transform: translateY(0) scale(1.01); }
-  50 % { transform: translateY(-10px) scale(1.03); }
+@keyframes logo-explosion {
+  0% { transform: scale(0.5); opacity: 0; filter: brightness(2) blur(20px); }
+  50% { transform: scale(1.2); opacity: 0.8; filter: brightness(3) blur(10px); }
+  100% { transform: scale(1); opacity: 1; filter: brightness(1) blur(0px); }
 }
 
-@keyframes eye - blink - red {
-  0 %, 100 % { opacity: 1; transform: scale(1); filter: blur(0px); box- shadow: 0 0 20px #ff0000;
-}
-50 % { opacity: 0.5; transform: scale(1.2); filter: blur(4px); box- shadow: 0 0 40px #ff0000; }
-}
-
-.animate - laser {
-  animation: laser - beam 2s ease -in -out infinite;
-  transform - origin: center;
+@keyframes robot-breathing {
+  0%, 100% { transform: translateY(0) scale(1.01); }
+  50% { transform: translateY(-10px) scale(1.03); }
 }
 
-.animate - explosion {
-  animation: logo - explosion 1s cubic - bezier(0.16, 1, 0.3, 1) forwards;
+@keyframes eye-blink-red {
+  0%, 100% { opacity: 1; transform: scale(1); filter: blur(0px); box-shadow: 0 0 20px #ff0000;
+}
+50% { opacity: 0.5; transform: scale(1.2); filter: blur(4px); box-shadow: 0 0 40px #ff0000; }
 }
 
-.animate - soft - pulse {
-  animation: soft - pulse 4s ease -in -out infinite;
+.animate-laser {
+  animation: laser-beam 2s ease-in-out infinite;
+  transform-origin: center;
 }
 
-.animate - robot {
-  animation: robot - breathing 8s ease -in -out infinite;
+.animate-explosion {
+  animation: logo-explosion 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.animate - eye - blink {
-  animation: eye - blink - red 3s ease -in -out infinite;
+.animate-soft-pulse {
+  animation: soft-pulse 4s ease-in-out infinite;
 }
+
+.animate-robot {
+  animation: robot-breathing 8s ease-in-out infinite;
+}
+
+.animate-eye-blink {
+  animation: eye-blink-red 3s ease-in-out infinite;
+}
+`;
 
 import { CyberCard } from "@/shared/ui/CyberCard";
 import { NeonButton } from "@/shared/ui/NeonButton";
