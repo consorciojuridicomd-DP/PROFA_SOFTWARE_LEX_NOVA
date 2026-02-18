@@ -125,15 +125,15 @@ export function MobileSidebar() {
                 <div className="border-t border-border/50 bg-background/50 p-6 space-y-6">
                     <div className="flex items-center gap-4 px-2">
                         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-[#FF3300] border border-primary/30 flex items-center justify-center text-white font-black text-lg shadow-[0_0_15px_rgba(255,85,0,0.3)]">
-                            {user?.full_name?.[0] || "U"}
+                            {(user as any)?.full_name?.[0] || "U"}
                         </div>
                         <div className="flex flex-col overflow-hidden">
-                            <span className="truncate text-sm font-black text-foreground uppercase tracking-wider">{user?.full_name || "Usuario"}</span>
+                            <span className="truncate text-sm font-black text-foreground uppercase tracking-wider">{(user as any)?.full_name || "Usuario"}</span>
                             <span className="truncate text-[10px] text-muted-foreground font-medium">{user?.email}</span>
                         </div>
                     </div>
 
-                    {user?.role === 'admin' && (
+                    {(user as any)?.role === 'admin' && (
                         <Link
                             href="/dashboard"
                             className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-black text-primary hover:bg-primary/10 transition-all border border-primary/30 shadow-[0_0_15px_rgba(255,85,0,0.1)] group"

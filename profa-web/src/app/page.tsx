@@ -45,6 +45,21 @@ export default function Home() {
         <SnowParticles />
       </div>
 
+      {/* ── Fixed Exit Button (Top Right) ── */}
+      <div className="fixed top-6 right-6 z-[100]">
+        <Link href="/login">
+          <button
+            className="group flex items-center gap-3 bg-red-600/10 hover:bg-red-600/20 border-2 border-red-600/30 hover:border-red-600 px-6 py-3 rounded-full transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,0,0,0.5)] active:scale-95"
+            title="SALIR DEL SISTEMA"
+          >
+            <span className="text-[10px] font-black tracking-[0.3em] uppercase text-red-500 group-hover:text-red-400">Cerrar Sistema</span>
+            <div className="w-8 h-8 rounded-full bg-red-600/20 flex items-center justify-center group-hover:bg-red-600 transition-colors">
+              <LogIn className="w-4 h-4 text-red-500 group-hover:text-white rotate-180" />
+            </div>
+          </button>
+        </Link>
+      </div>
+
       <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 py-8 md:px-8">
 
         {/* ── Central Card (Robot Container) ── */}
