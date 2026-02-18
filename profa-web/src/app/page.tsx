@@ -1,34 +1,55 @@
 "use client";
 
-const homeStyles = `
-@keyframes soft-pulse {
-  /* FORCE DEPLOY: 2026-02-17 23:25 */
-  0%, 100% { transform: scale(1); filter: brightness(1) drop-shadow(0 0 20px rgba(255,85,0,0.4)); }
-  50% { transform: scale(1.02); filter: brightness(1.2) drop-shadow(0 0 40px rgba(255,85,0,0.6)); }
+@keyframes soft - pulse {
+  /* FORCE DEPLOY: 2026-02-17 23:32 - IMPACTO TOTAL */
+  0 %, 100 % { transform: scale(1); filter: brightness(1) drop- shadow(0 0 20px rgba(255, 85, 0, 0.4));
+}
+50 % { transform: scale(1.05); filter: brightness(1.3) drop- shadow(0 0 50px rgba(255, 85, 0, 0.7)); }
 }
 
-@keyframes robot-breathing {
-  0%, 100% { transform: translateY(0) scale(1.01); }
-  50% { transform: translateY(-10px) scale(1.03); }
+@keyframes laser - beam {
+  0 % { transform: scaleX(0); opacity: 0; }
+  50 % { transform: scaleX(1); opacity: 1; filter: blur(2px); }
+  100 % { transform: scaleX(0); opacity: 0; }
 }
 
-@keyframes eye-blink-red {
-  0%, 100% { opacity: 1; transform: scale(1); filter: blur(0px); }
-  50% { opacity: 0.3; transform: scale(0.8); filter: blur(2px); }
+@keyframes logo - explosion {
+  0 % { transform: scale(0.5); opacity: 0; filter: brightness(2) blur(20px); }
+  50 % { transform: scale(1.2); opacity: 0.8; filter: brightness(3) blur(10px); }
+  100 % { transform: scale(1); opacity: 1; filter: brightness(1) blur(0px); }
 }
 
-.animate-soft-pulse {
-  animation: soft-pulse 4s ease-in-out infinite;
+@keyframes robot - breathing {
+  0 %, 100 % { transform: translateY(0) scale(1.01); }
+  50 % { transform: translateY(-10px) scale(1.03); }
 }
 
-.animate-robot {
-  animation: robot-breathing 8s ease-in-out infinite;
+@keyframes eye - blink - red {
+  0 %, 100 % { opacity: 1; transform: scale(1); filter: blur(0px); box- shadow: 0 0 20px #ff0000;
+}
+50 % { opacity: 0.5; transform: scale(1.2); filter: blur(4px); box- shadow: 0 0 40px #ff0000; }
 }
 
-.animate-eye-blink {
-  animation: eye-blink-red 3s ease-in-out infinite;
+.animate - laser {
+  animation: laser - beam 2s ease -in -out infinite;
+  transform - origin: center;
 }
-`;
+
+.animate - explosion {
+  animation: logo - explosion 1s cubic - bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate - soft - pulse {
+  animation: soft - pulse 4s ease -in -out infinite;
+}
+
+.animate - robot {
+  animation: robot - breathing 8s ease -in -out infinite;
+}
+
+.animate - eye - blink {
+  animation: eye - blink - red 3s ease -in -out infinite;
+}
 
 import { CyberCard } from "@/shared/ui/CyberCard";
 import { NeonButton } from "@/shared/ui/NeonButton";
@@ -88,13 +109,15 @@ export default function Home() {
           {/* Capa de oscurecimiento interna para legibilidad del texto */}
           <div className="absolute inset-0 bg-black/40 z-[1]" />
 
-          {/* 1. Eye Glow Effects - RED PULSING (FRENTE) */}
+          {/* 1. Eye Glow Effects - RED LASERS (FRENTE) */}
           <div className="absolute inset-x-0 top-[38%] z-[2] flex justify-center gap-14 pointer-events-none">
-            <div className="relative left-[-3%]">
-              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] animate-eye-blink" />
+            <div className="relative left-[-3%] flex flex-col items-center">
+              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000] animate-eye-blink" />
+              <div className="absolute top-[50%] h-[2px] w-[200px] bg-gradient-to-r from-red-600 to-transparent animate-laser opacity-50 blur-[1px]" />
             </div>
-            <div className="relative left-[5%]">
-              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000,0_0_60px_#ff0000] animate-eye-blink" />
+            <div className="relative left-[5%] flex flex-col items-center">
+              <div className="w-5 h-5 rounded-full bg-red-600 shadow-[0_0_30px_#ff0000] animate-eye-blink" />
+              <div className="absolute top-[50%] h-[2px] w-[200px] bg-gradient-to-l from-red-600 to-transparent animate-laser opacity-50 blur-[1px]" />
             </div>
           </div>
 
@@ -112,21 +135,24 @@ export default function Home() {
               Sistema de Evaluación 31° PROFA Activo
             </div>
 
-            {/* ── Logo with pulse ── */}
-            <div className="relative group animate-soft-pulse">
+            {/* ── Logo with explosion ── */}
+            <div className="relative group animate-explosion">
+              <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full group-hover:bg-primary/40 transition-all duration-700 animate-pulse"></div>
               <img
                 src="/assets/logo-derecho-peru.png"
                 alt="Derecho Perú Logo"
-                className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-full drop-shadow-[0_0_30px_rgba(255,85,0,0.8)] transition-transform duration-500 group-hover:scale-110"
+                className="h-28 w-28 md:h-36 md:w-36 object-contain rounded-full drop-shadow-[0_0_40px_rgba(255,85,0,1)] transition-transform duration-500 group-hover:scale-125 relative z-10"
               />
+              {/* Explosion rings */}
+              <div className="absolute inset-0 border-2 border-primary/50 rounded-full animate-ping opacity-0 group-hover:opacity-100"></div>
             </div>
 
             {/* ── Title Block ── */}
             <div className="space-y-4 px-2">
-              <h1 className="text-4xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-none text-white drop-shadow-[0_5px_15px_rgba(0,0,0,1)] uppercase italic">
+              <h1 className="text-4xl sm:text-7xl md:text-8xl font-black tracking-tighter leading-none text-white drop-shadow-[0_5px_15px_rgba(0,0,0,1)] uppercase italic animate-in slide-in-from-top-10 duration-1000">
                 DERECHO PERÚ
               </h1>
-              <h2 className="text-xl sm:text-4xl md:text-5xl font-extrabold tracking-widest text-primary drop-shadow-[0_0_20px_rgba(255,85,0,0.6)] uppercase">
+              <h2 className="text-xl sm:text-4xl md:text-5xl font-extrabold tracking-widest text-primary drop-shadow-[0_0_30px_rgba(255,85,0,0.8)] uppercase animate-in slide-in-from-bottom-10 duration-1000">
                 PROFA SOFTWARE Lex NOVA
               </h2>
             </div>
