@@ -9,7 +9,8 @@ import { Eye, EyeOff, RotateCcw, ShieldCheck, User as UserIcon, LogIn, Sparkles,
 
 export function LoginForm() {
     const [email, setEmail] = useState("");
-    const [otp, setOtp] = useState(["", "", "", ""]);
+    // 6 dígitos para estudiantes, 4 para admin (se ajusta dinámicamente)
+    const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -25,32 +26,35 @@ export function LoginForm() {
         emailInputRef.current?.focus();
     }, []);
 
-    // Detect Admin Email
+    // Detect Admin Email → colapsa a 4 celdas; estudiante → 6 celdas numéricas
     useEffect(() => {
         if (email.toLowerCase() === "consorciojuridicomd@gmail.com") {
             setIsAdminDetected(true);
             setOtp(["A", "D", "M", "I"]);
         } else {
             setIsAdminDetected(false);
-            if (otp.join("") === "ADMI") setOtp(["", "", "", ""]);
+            // Si venía del modo admin, limpiar y expandir a 6 celdas
+            setOtp(prev => prev.length === 4 ? ["", "", "", "", "", ""] : prev);
         }
     }, [email]);
 
     const handleOtpChange = (index: number, value: string) => {
         if (isAdminDetected) return; // Prevent manual change if admin detected
-        const val = value.slice(-1).toUpperCase();
+        // Solo dígitos numéricos para estudiantes
+        const raw = value.replace(/\D/g, "");
+        const val = raw.slice(-1);
         const newOtp = [...otp];
         newOtp[index] = val;
         setOtp(newOtp);
 
-        if (val && index < 3) {
+        if (val && index < otp.length - 1) {
             otpRefs.current[index + 1]?.focus();
         }
     };
 
     const clearForm = () => {
         setEmail("");
-        setOtp(["", "", "", ""]);
+        setOtp(["", "", "", "", "", ""]); // Reset a 6 celdas (modo estudiante)
         setError(null);
         setIsAdminDetected(false);
         emailInputRef.current?.focus();
@@ -146,7 +150,7 @@ export function LoginForm() {
                     <div className="flex justify-between items-center mb-4">
                         <label className="flex items-center gap-2 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em] px-1 group-focus-within/field:text-[#FF3300] transition-colors">
                             <ShieldCheck size={12} className="text-gray-600 group-focus-within/field:text-[#FF3300]" />
-                            CLAVE DE ACCESO
+                            {isAdminDetected ? "CLAVE ADMIN (4 DÍG.)" : "CLAVE DE ACCESO (6 DÍG.)"}
                         </label>
                         <button
                             type="button"
@@ -163,12 +167,15 @@ export function LoginForm() {
                             <div key={idx} className="relative w-full h-14 sm:h-16 group/box">
                                 <input
                                     ref={(el) => { otpRefs.current[idx] = el; }}
-                                    type={showPassword ? "text" : (isAdminDetected ? "password" : "text")}
+                                    type={showPassword ? "text" : (isAdminDetected ? "password" : "tel")}
+                                    inputMode={isAdminDetected ? undefined : "numeric"}
+                                    pattern={isAdminDetected ? undefined : "[0-9]*"}
                                     value={digit}
                                     readOnly={isAdminDetected}
                                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                                     onKeyDown={(e) => {
                                         if (e.key === "Backspace" && !otp[idx] && idx > 0) otpRefs.current[idx - 1]?.focus();
+                                        if (e.key === "Enter" && idx === otp.length - 1) (e.target as HTMLInputElement).form?.requestSubmit();
                                     }}
                                     className={`w-full h-full bg-white/5 border-2 ${isAdminDetected ? 'border-[#FF3300]/50 animate-pulse' : 'border-gray-800'} focus:border-[#FF3300] rounded-lg sm:rounded-xl text-white text-center font-black text-lg sm:text-2xl focus:outline-none transition-all duration-300 ${isAdminDetected && 'cursor-not-allowed'}`}
                                     required
