@@ -5,10 +5,25 @@ import Image from "next/image";
 import { loginService } from "../services/login.service";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, RotateCcw, ShieldCheck, User as UserIcon, LogIn, Sparkles, ChevronLeft, Settings } from "lucide-react";
+import { Eye, EyeOff, RotateCcw, ShieldCheck, User as UserIcon, LogIn, Sparkles, ChevronLeft, Settings, X } from "lucide-react";
+
+const STORAGE_KEY = "lexnova_saved_emails";
+
+function getSavedEmails(): string[] {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+    catch { return []; }
+}
+
+function saveEmail(email: string) {
+    if (!email) return;
+    const list = getSavedEmails().filter(e => e !== email);
+    list.unshift(email); // más reciente primero
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 10))); // máx 10
+}
 
 export function LoginForm() {
     const [email, setEmail] = useState("");
+    const [savedEmails, setSavedEmails] = useState<string[]>([]);
     // 6 dígitos para estudiantes, 4 para admin (se ajusta dinámicamente)
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [showPassword, setShowPassword] = useState(false);
@@ -20,10 +35,20 @@ export function LoginForm() {
     const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
     const router = useRouter();
 
-    // Auto-focus and Radical Clean on mount
+    // Al montar: cargar emails guardados y pre-rellenar último email
     useEffect(() => {
-        clearForm();
-        emailInputRef.current?.focus();
+        const list = getSavedEmails();
+        setSavedEmails(list);
+        // Pre-rellenar con el último email usado (NO borrar)
+        if (list.length > 0) setEmail(list[0]);
+        // Solo limpiar el OTP/PIN al montar
+        setOtp(["", "", "", "", "", ""]);
+        setError(null);
+        // Focus al OTP si ya hay email, sino al email
+        setTimeout(() => {
+            if (list.length > 0) otpRefs.current[0]?.focus();
+            else emailInputRef.current?.focus();
+        }, 100);
     }, []);
 
     // Detect Admin Email → colapsa a 4 celdas; estudiante → 6 celdas numéricas
@@ -52,11 +77,20 @@ export function LoginForm() {
         }
     };
 
+    // clearForm solo limpia OTP y error, NO el email (el email se mantiene)
     const clearForm = () => {
-        setEmail("");
         setOtp(["", "", "", "", "", ""]); // Reset a 6 celdas (modo estudiante)
         setError(null);
         setIsAdminDetected(false);
+        emailInputRef.current?.focus();
+    };
+
+    // Limpiar solo el campo de email (botón X)
+    const clearEmail = () => {
+        setEmail("");
+        setIsAdminDetected(false);
+        setOtp(["", "", "", "", "", ""]);
+        setError(null);
         emailInputRef.current?.focus();
     };
 
@@ -73,6 +107,9 @@ export function LoginForm() {
             setLoading(false);
             return;
         }
+
+        // Guardar email exitoso en localStorage para próximas sesiones
+        saveEmail(email);
 
         const role = data.profile?.role;
         router.push(role === 'admin' ? '/dashboard' : '/app');
@@ -134,16 +171,33 @@ export function LoginForm() {
                         <input
                             ref={emailInputRef}
                             type="text"
+                            list="saved-emails"
                             value={email}
                             onChange={(e) => setEmail(e.target.value.toLowerCase())}
                             onKeyPress={(e) => e.key === 'Enter' && otpRefs.current[0]?.focus()}
                             placeholder="ej. usuario@correo.com"
-                            className="w-full bg-white/5 border-b-2 border-gray-900 focus:border-[#FF3300] px-4 py-4 text-white text-sm font-bold tracking-widest focus:outline-none transition-all placeholder:text-gray-800 placeholder:font-black lowercase"
-                            autoComplete="off"
+                            className="w-full bg-white/5 border-b-2 border-gray-900 focus:border-[#FF3300] px-4 pr-10 py-4 text-white text-sm font-bold tracking-widest focus:outline-none transition-all placeholder:text-gray-800 placeholder:font-black lowercase"
+                            autoComplete="on"
                             disabled={loading}
                             required
                         />
+                        {/* datalist: sugerencias de emails previos */}
+                        <datalist id="saved-emails">
+                            {savedEmails.map(e => <option key={e} value={e} />)}
+                        </datalist>
+                        {/* Botón X para limpiar solo el email */}
+                        {email && (
+                            <button
+                                type="button"
+                                onClick={clearEmail}
+                                title="Limpiar correo"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#FF3300] transition-colors p-1"
+                            >
+                                <X size={14} />
+                            </button>
+                        )}
                     </div>
+
                 </div>
 
                 <div className="group/field mb-10">
