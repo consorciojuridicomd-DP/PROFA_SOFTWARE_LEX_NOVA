@@ -2,14 +2,15 @@ import { createClient } from "@/shared/lib/supabase/client";
 import { ExamSession, ExamTemplate, Question, ExamConfig } from "../types";
 
 // ── Mapeo de etiquetas UI → nombres exactos en la BD ──────────────────────────
+// Los Casos Prácticos mapean a sus materias base hasta que se carguen preguntas específicas
 export const TOPIC_LABEL_TO_DB: Record<string, string> = {
-    "Casos Prácticos Penal": "Casos Prácticos de Derecho Penal",
-    "Casos Prácticos Civil": "Casos Prácticos de Derecho Civil",
-    "Casos Prácticos Constitucional": "Casos Prácticos de Derecho Constitucional",
-    "Casos Prácticos Administrativo": "Casos Prácticos de Derecho Administrativo",
-    "Casos Prácticos Laboral": "Derecho Laboral",
-    "Casos Prácticos Comercial": "Derecho Comercial",
-    "Casos Prácticos Tributario": "Derecho Tributario",
+    // Temas de conocimiento
+    "Derecho Penal": "Derecho Penal",
+    "Derecho Civil": "Derecho Civil",
+    "Derecho Constitucional": "Derecho Constitucional",
+    "Derecho Procesal Penal": "Derecho Procesal Penal",
+    "Derecho Procesal Civil": "Derecho Procesal Civil",
+    "Derecho Administrativo": "Derecho Administrativo",
     "Argumentación Jurídica": "Argumentación y Razonamiento Jurídico",
     "Derecho de la Competencia": "Derecho de la Competencia",
     "Derecho de Propiedad Intelectual": "Derecho de Propiedad Intelectual",
@@ -17,6 +18,14 @@ export const TOPIC_LABEL_TO_DB: Record<string, string> = {
     "Derecho Minero": "Derecho Minero",
     "Derecho Previsional": "Derecho Previsional",
     "Derecho Publicitario": "Derecho Publicitario",
+    // Casos Prácticos → materias base con preguntas
+    "Casos Prácticos Penal": "Derecho Penal",
+    "Casos Prácticos Civil": "Derecho Civil",
+    "Casos Prácticos Constitucional": "Derecho Constitucional",
+    "Casos Prácticos Administrativo": "Derecho Administrativo",
+    "Casos Prácticos Laboral": "Derecho Laboral",
+    "Casos Prácticos Comercial": "Derecho Comercial",
+    "Casos Prácticos Tributario": "Derecho Tributario",
 };
 
 /** Convierte etiquetas UI en nombres de materias de la BD (sin duplicados). */
