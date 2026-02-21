@@ -12,6 +12,11 @@ export const TOPIC_LABEL_TO_DB: Record<string, string> = {
     "Casos Prácticos Tributario": "Derecho Tributario",
     "Argumentación Jurídica": "Argumentación y Razonamiento Jurídico",
     "Derecho de la Competencia": "Derecho de la Competencia",
+    "Derecho de Propiedad Intelectual": "Derecho de Propiedad Intelectual",
+    "Derecho Registral": "Derecho Registral",
+    "Derecho Minero": "Derecho Minero",
+    "Derecho Previsional": "Derecho Previsional",
+    "Derecho Publicitario": "Derecho Publicitario",
 };
 
 /** Convierte etiquetas UI en nombres de materias de la BD (sin duplicados). */
