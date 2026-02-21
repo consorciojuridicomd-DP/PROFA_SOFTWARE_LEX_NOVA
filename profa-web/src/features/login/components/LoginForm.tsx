@@ -317,7 +317,20 @@ export function LoginForm() {
                 </div>
             </form>
 
-            <div className="mt-12 text-center relative z-10">
+            {/* Link de registro para nuevos aspirantes */}
+            <div className="mt-8 text-center relative z-10">
+                <p className="text-xs text-gray-600">
+                    ¿Eres nuevo aspirante?{" "}
+                    <a
+                        href="/registro"
+                        className="text-[#FF3300] hover:text-white font-black transition-colors"
+                    >
+                        Solicitar Acceso →
+                    </a>
+                </p>
+            </div>
+
+            <div className="mt-4 text-center relative z-10">
                 <span className="text-[10px] text-gray-800 font-black uppercase tracking-[0.6em] animate-pulse">
                     LEX NOVA SYSTEM 2026.V1
                 </span>

@@ -12,7 +12,7 @@ import { useAuth } from "@/features/login/hooks/useAuth";
 export default function DashboardPage() {
     const { user } = useAuth();
     const topRec = getTopRecommendation();
-    const firstName = user?.full_name?.split(' ')[0] || "Aspirante";
+    const firstName = (user as any)?.full_name?.split(' ')[0] || (user as any)?.user_metadata?.full_name?.split(' ')[0] || "Aspirante";
 
     return (
         <div className="space-y-8">

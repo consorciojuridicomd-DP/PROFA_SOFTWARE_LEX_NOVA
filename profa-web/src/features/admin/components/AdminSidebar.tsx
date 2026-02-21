@@ -23,7 +23,8 @@ const navItems = [
     { label: "CONTROL PREGUNTAS", href: "/admin/questions", icon: FileText },
     { label: "MATRIZ CATEGORÍAS", href: "/admin/categories", icon: Layers },
     { label: "PLANTILLAS EXAMEN", href: "/admin/templates", icon: BookOpen },
-    { label: "GESTIÓN ASPIRANTES", href: "/admin/users", icon: Settings }, // GEAR ICON FOR USERS AS REQUESTED
+    { label: "GESTIÓN ASPIRANTES", href: "/admin/users", icon: Users },
+    { label: "SOLICITUDES REGISTRO", href: "/admin/registros", icon: ShieldAlert, badge: true },
     { label: "INGESTA PDF (AI)", href: "/admin/import", icon: Upload },
     { label: "CONFIGURACIÓN", href: "/admin/settings", icon: Settings },
 ];

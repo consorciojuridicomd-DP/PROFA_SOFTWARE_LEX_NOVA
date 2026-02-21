@@ -58,5 +58,42 @@ export const adminService = {
         });
 
         return await response.json();
+    },
+
+    /**
+     * Obtiene solicitudes de registro (admin solo)
+     */
+    async getRegistrationRequests(status?: 'pending' | 'approved' | 'rejected') {
+        let query = supabase
+            .from('registration_requests')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (status) query = query.eq('status', status);
+
+        const { data, error } = await query;
+        return { data, error };
+    },
+
+    /**
+     * Rechaza solicitud de registro via RPC
+     */
+    async rejectRegistration(requestId: string, reason?: string) {
+        const { error } = await supabase.rpc('reject_registration', {
+            p_request_id: requestId,
+            p_reason: reason || ''
+        });
+        return { error };
+    },
+
+    /**
+     * Cuenta solicitudes pendientes
+     */
+    async getPendingRegistrationCount() {
+        const { count, error } = await supabase
+            .from('registration_requests')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'pending');
+        return { count: count || 0, error };
     }
 }

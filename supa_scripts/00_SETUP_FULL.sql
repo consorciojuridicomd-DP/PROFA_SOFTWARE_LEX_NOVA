@@ -128,19 +128,19 @@ CREATE TABLE IF NOT EXISTS public.examen_preguntas (
 );
 
 CREATE TABLE IF NOT EXISTS public.intentos (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    examen_id UUID REFERENCES public.examenes(id) ON DELETE SET NULL,
-    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    ended_at TIMESTAMPTZ, 
-    completed_at TIMESTAMPTZ, 
-    score NUMERIC DEFAULT 0,
-    total_correct INT DEFAULT 0,
+    id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    examen_id    UUID REFERENCES public.examenes(id) ON DELETE SET NULL,
+    user_id      UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    modo         exam_mode NOT NULL,                              -- 'simulacro' | 'materia' | 'personalizado'
+    config       JSONB DEFAULT '{}'::JSONB,                      -- ConfigurAción dinámica del examen
+    started_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ends_at      TIMESTAMPTZ,                                     -- Deadline server-truth (antifraude)
+    completed_at TIMESTAMPTZ,
+    estado       session_status DEFAULT 'in_progress'::session_status,
+    score        NUMERIC,
+    total_correct   INT DEFAULT 0,
     total_incorrect INT DEFAULT 0,
-    estado session_status DEFAULT 'in_progress'::session_status,
-    tiempo_usado_seg INT DEFAULT 0,
-    metadata JSONB,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at   TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS public.respuestas (

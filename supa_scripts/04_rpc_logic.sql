@@ -20,72 +20,84 @@ FOR SELECT USING (
 );
 
 -- 2. RPC: start_session
--- Creates an attempt, selects questions (randomly from config or from fixed exam), populates session_questions.
+-- Crea un intento, selecciona preguntas (aleatoriamente o desde un examen fijo),
+-- y puebla session_questions. Determina el modo correctamente (enum exam_mode).
 CREATE OR REPLACE FUNCTION public.start_session(
     p_examen_id UUID,
-    p_config JSONB DEFAULT '{}'::JSONB
+    p_config    JSONB DEFAULT '{}'::JSONB
 )
 RETURNS UUID AS $$
 DECLARE
     v_intento_id UUID;
-    v_user_id UUID;
-    v_limit INT;
-    v_duration INT;
+    v_user_id    UUID;
+    v_limit      INT;
+    v_duration   INT;
+    v_modo       exam_mode;   -- Tipado como enum, NO como TEXT
+    v_topics_len INT;
 BEGIN
     v_user_id := auth.uid();
     IF v_user_id IS NULL THEN RAISE EXCEPTION 'Not authenticated'; END IF;
 
-    -- Get duration from exam or config
+    -- Determinar duración
     IF p_examen_id IS NOT NULL THEN
         SELECT duracion_min INTO v_duration FROM public.examenes WHERE id = p_examen_id;
+        IF v_duration IS NULL THEN v_duration := 60; END IF;
     ELSE
         v_duration := (p_config->>'durationMinutes')::INT;
         IF v_duration IS NULL THEN v_duration := 60; END IF;
     END IF;
-    
-    -- Insert Intento
-    INSERT INTO public.intentos (examen_id, user_id, started_at, ended_at, estado, metadata)
+
+    -- Determinar modo (enum exam_mode exacto: simulacro | materia | personalizado)
+    IF p_examen_id IS NOT NULL THEN
+        v_modo := 'simulacro'::exam_mode;
+    ELSE
+        v_topics_len := COALESCE(jsonb_array_length(p_config->'topics'), 0);
+        IF v_topics_len > 0 THEN
+            v_modo := 'materia'::exam_mode;
+        ELSE
+            v_modo := 'personalizado'::exam_mode;
+        END IF;
+    END IF;
+
+    -- Insertar intento (ends_at y config son los nombres reales en la DB)
+    INSERT INTO public.intentos (examen_id, user_id, started_at, ends_at, estado, modo, config)
     VALUES (
-        p_examen_id, 
-        v_user_id, 
-        NOW(), 
-        NOW() + (v_duration || ' minutes')::INTERVAL, 
-        'in_progress',
+        p_examen_id,
+        v_user_id,
+        NOW(),
+        NOW() + (v_duration || ' minutes')::INTERVAL,
+        'in_progress'::session_status,
+        v_modo,
         p_config
     )
     RETURNING id INTO v_intento_id;
 
+    -- Seleccionar preguntas
     IF p_examen_id IS NOT NULL THEN
-        -- Select Questions defined in examen_preguntas (Fixed Exam)
+        -- Modo simulacro: preguntas del examen fijo
         INSERT INTO public.session_questions (intento_id, pregunta_id, orden)
         SELECT v_intento_id, pregunta_id, orden
         FROM public.examen_preguntas
         WHERE examen_id = p_examen_id;
     ELSE
-        -- DYNAMIC MODE: Select random questions based on config
-        -- 1. Extract limit
+        -- Modo materia o personalizado: selección dinámica aleatoria
         v_limit := (p_config->>'questionCount')::INT;
         IF v_limit IS NULL OR v_limit <= 0 THEN v_limit := 30; END IF;
-        
-        -- 2. Insert random questions
-        -- Note: If topics are provided in config, we should filter. 
-        -- For robust implementation, we assume topics are Materia IDs.
-        -- Use logic to filter if topics array is not empty.
-        
+
         INSERT INTO public.session_questions (intento_id, pregunta_id, orden)
         SELECT v_intento_id, id, row_number() OVER (ORDER BY RANDOM())
         FROM public.preguntas q
-        WHERE 
-            q.estado = 'active' AND -- Only active questions
-            (
-                (p_config->'topics') IS NULL OR 
-                jsonb_array_length(p_config->'topics') = 0 OR 
-                q.materia_id::text IN (SELECT jsonb_array_elements_text(p_config->'topics'))
+        WHERE
+            q.estado = 'active'
+            AND (
+                v_topics_len = 0
+                OR q.materia_id::text IN (
+                    SELECT jsonb_array_elements_text(p_config->'topics')
+                )
             )
         LIMIT v_limit;
-        
     END IF;
-    
+
     RETURN v_intento_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
